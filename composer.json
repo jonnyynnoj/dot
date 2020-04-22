@@ -1,0 +1,34 @@
+{
+    "name": "fabrica/dot",
+	"description": "Nested array/object access through dot notation",
+    "type": "library",
+    "license": "MIT",
+	"authors": [
+		{
+			"name": "Jonathan Taylor",
+			"email": "jonny.taylor5@gmail.com"
+		}
+	],
+	"scripts": {
+		"test": "phpunit"
+	},
+	"require": {
+		"php": "^7.0"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^7.5"
+	},
+	"autoload": {
+		"psr-4": {
+			"Fabrica\\Dot\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Fabrica\\Dot\\Test\\": "test/"
+		}
+	},
+	"config": {
+		"sort-packages": true
+	}
+}
