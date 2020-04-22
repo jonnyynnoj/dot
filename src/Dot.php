@@ -55,10 +55,6 @@ class Dot
 
 	private function &getProperty(&$item, $key, $value = null)
 	{
-		if (is_array($item)) {
-			return $item[$key];
-		}
-
 		if (is_object($item)) {
 			if (strpos($key, '@') === 0) {
 				$result = $this->handleMethodCall($item, $key, $value);
@@ -67,6 +63,16 @@ class Dot
 
 			return $item->$key;
 		}
+
+		if (!is_array($item) && !($item instanceof \ArrayAccess)) {
+			throw new \Exception('Not an array or ArrayAccess');
+		}
+
+		if (preg_match('/(.+)\[(\d+)\]$/', $key, $matches)) {
+			return $item[$matches[1]][$matches[2]];
+		}
+
+		return $item[$key];
 	}
 
 	private function handleMethodCall($item, $key, $value = null)
