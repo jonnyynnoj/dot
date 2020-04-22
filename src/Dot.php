@@ -31,7 +31,7 @@ class Dot
 		$item = &$return[0];
 		$key = $return[1];
 
-		$property = &$this->getProperty($item, $key);
+		$property = &$this->getProperty($item, $key, $value);
 		$property = $value;
 	}
 
@@ -53,7 +53,7 @@ class Dot
 		return $this->traverse($data, $segments);
 	}
 
-	private function &getProperty(&$item, $key)
+	private function &getProperty(&$item, $key, $value = null)
 	{
 		if (is_array($item)) {
 			return $item[$key];
@@ -61,7 +61,7 @@ class Dot
 
 		if (is_object($item)) {
 			if (strpos($key, '@') === 0) {
-				$result = $this->handleMethodCall($item, $key);
+				$result = $this->handleMethodCall($item, $key, $value);
 				return $result;
 			}
 
@@ -69,9 +69,9 @@ class Dot
 		}
 	}
 
-	private function handleMethodCall($item, $key)
+	private function handleMethodCall($item, $key, $value = null)
 	{
 		$method = substr($key, 1);
-		return $item->$method();
+		return $item->$method($value);
 	}
 }

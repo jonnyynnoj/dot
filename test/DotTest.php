@@ -94,4 +94,26 @@ class DotTest extends TestCase
 		$value = Dot::from($data)->get('nested.@getSomething');
 		self::assertEquals('value', $value);
 	}
+
+	/** @test */
+	public function it_can_call_setter()
+	{
+		$data = [
+			'nested' => [
+				'property' => new class {
+					private $value;
+					public function getValue() {
+						return $this->value;
+					}
+					public function setValue($value) {
+						$this->value = $value;
+					}
+				}
+			]
+		];
+
+		$dot = Dot::from($data);
+		$dot->set('nested.property.@setValue', 'value');
+		self::assertEquals('value', $dot->get('nested.property.@getValue'));
+	}
 }
