@@ -18,15 +18,11 @@ class Dot
 
 	public function get(string $path)
 	{
-		list($item, $key) = $this->parse($this->data, $path);
+		$return = $this->parse($this->data, $path);
+		$item = &$return[0];
+		$key = $return[1];
 
-		if (is_array($item)) {
-			return $item[$key];
-		}
-
-		if (is_object($item)) {
-			return $item->$key;
-		}
+		return $this->getProperty($item, $key);
 	}
 
 	public function set(string $path, $value)
@@ -35,13 +31,8 @@ class Dot
 		$item = &$return[0];
 		$key = $return[1];
 
-		if (is_array($item)) {
-			$item[$key] = $value;
-		}
-
-		if (is_object($item)) {
-			$item->$key = $value;
-		}
+		$property = &$this->getProperty($item, $key);
+		$property = $value;
 	}
 
 	private function parse(&$data, string $path)
@@ -58,12 +49,18 @@ class Dot
 			return [&$data, $key];
 		}
 
-		if (is_array($data)) {
-			$data = &$data[$key];
-		} elseif (is_object($data)) {
-			$data = &$data->$key;
+		$data = &$this->getProperty($data, $key);
+		return $this->traverse($data, $segments);
+	}
+
+	private function &getProperty(&$item, $key)
+	{
+		if (is_array($item)) {
+			return $item[$key];
 		}
 
-		return $this->traverse($data, $segments);
+		if (is_object($item)) {
+			return $item->$key;
+		}
 	}
 }
