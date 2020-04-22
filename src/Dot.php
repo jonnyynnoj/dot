@@ -60,7 +60,18 @@ class Dot
 		}
 
 		if (is_object($item)) {
+			if (strpos($key, '@') === 0) {
+				$result = $this->handleMethodCall($item, $key);
+				return $result;
+			}
+
 			return $item->$key;
 		}
+	}
+
+	private function handleMethodCall($item, $key)
+	{
+		$method = substr($key, 1);
+		return $item->$method();
 	}
 }

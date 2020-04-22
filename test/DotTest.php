@@ -68,4 +68,30 @@ class DotTest extends TestCase
 		$dot->set('nested.data.property', 'foo');
 		self::assertEquals('foo', $dot->get('nested.data.property'));
 	}
+
+	/** @test */
+	public function it_can_traverse_through_getters()
+	{
+		$data = [
+			'nested' => new class {
+				public function getSomething() {
+					return ['property' => 'value'];
+				}
+			}
+		];
+
+		$value = Dot::from($data)->get('nested.@getSomething.property');
+		self::assertEquals('value', $value);
+
+		$data = [
+			'nested' => new class {
+				public function getSomething() {
+					return 'value';
+				}
+			}
+		];
+
+		$value = Dot::from($data)->get('nested.@getSomething');
+		self::assertEquals('value', $value);
+	}
 }
