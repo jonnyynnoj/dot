@@ -23,6 +23,10 @@ class Dot
 		if (is_array($item)) {
 			return $item[$key];
 		}
+
+		if (is_object($item)) {
+			return $item->$key;
+		}
 	}
 
 	public function set(string $path, $value)
@@ -33,6 +37,10 @@ class Dot
 
 		if (is_array($item)) {
 			$item[$key] = $value;
+		}
+
+		if (is_object($item)) {
+			$item->$key = $value;
 		}
 	}
 
@@ -52,6 +60,8 @@ class Dot
 
 		if (is_array($data)) {
 			$data = &$data[$key];
+		} elseif (is_object($data)) {
+			$data = &$data->$key;
 		}
 
 		return $this->traverse($data, $segments);
