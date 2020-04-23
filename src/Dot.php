@@ -20,47 +20,59 @@ class Dot
 
 	public function get(string $path)
 	{
-		$result = $this->parser->parse($this->data, $path);
-		return $this->getValueFromResult($result);
+		$node = $this->parser->parse($this->data, $path);
+		return $this->recursiveGet($node);
 	}
 
-	public function getValueFromResult($result)
+	/**
+	 * @param Node|Node[] $node
+	 *
+	 * @throws \Exception
+	 * @return mixed
+	 */
+	private function recursiveGet($node)
 	{
-		if (is_array($result)) {
-			return array_map([$this, 'getValueFromResult'], $result);
+		if (is_array($node)) {
+			return array_map([$this, 'recursiveGet'], $node);
 		}
 
-		return $this->parser->accessProperty($result->item, $result->key);
+		return $node->accessValue();
 	}
 
 	public function set(string $path, $value)
 	{
-		$result = $this->parser->parse($this->data, $path);
-		$this->setValueFromResult($result, $value);
+		$node = $this->parser->parse($this->data, $path);
+		$this->recursiveSet($node, $value);
 	}
 
-	public function setValueFromResult($result, $value)
+	/**
+	 * @param Node|Node[] $node
+	 * @param mixed       $value
+	 *
+	 * @throws \Exception
+	 */
+	private function recursiveSet($node, $value)
 	{
-		if (is_array($result)) {
-			foreach ($result as $r) {
-				$this->setValueFromResult($r, $value);
+		if (is_array($node)) {
+			foreach ($node as $n) {
+				$this->recursiveSet($n, $value);
 			}
 			return;
 		}
 
-		if (is_object($result->item) && $this->parser->isMethodCall($result->key)) {
-			$this->parser->callMethod($result->item, $result->key, $value);
+		if ($node->isMethodCall()) {
+			$node->callMethod($value);
 			return;
 		}
 
-		if ($result->key === '*') {
-			foreach ($result->item as &$item) {
+		if ($node->isExpand()) {
+			foreach ($node->item as &$item) {
 				$item = $value;
 			}
 			return;
 		}
 
-		$r = &$this->parser->accessProperty($result->item, $result->key);
+		$r = &$node->accessValue();
 		$r = $value;
 	}
 }
