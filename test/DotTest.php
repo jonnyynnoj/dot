@@ -301,4 +301,24 @@ class DotTest extends TestCase
 		self::assertNull($dot->get('key.foo.bar'));
 		self::assertNull($dot->get('key.foo.bar.baz'));
 	}
+
+	/** @test */
+	public function it_can_create_array_keys_if_missing()
+	{
+		$data = ['key' => null];
+
+		$dot = Dot::from($data);
+		$dot->set('key.foo.bar.baz', 2);
+		self::assertEquals(2, $data['key']['foo']['bar']['baz']);
+	}
+
+	/** @test */
+	public function it_can_create_object_properties_if_missing()
+	{
+		$data = (object)['key' => null];
+
+		$dot = Dot::from($data);
+		$dot->set('key.foo.bar.baz', 2);
+		self::assertEquals(2, $data->key->foo->bar->baz);
+	}
 }

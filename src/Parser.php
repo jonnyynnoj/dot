@@ -24,13 +24,18 @@ class Parser
 
 		if ($key === '*' && $node->isArrayLike()) {
 			$results = [];
-			foreach ($data as &$item) {
+			foreach ($node->item as &$item) {
 				$results[] = $this->traverse($item, $segments);
 			}
 			return $results;
 		}
 
 		$data = &$node->accessValue();
+
+		if ($data === null) {
+			$data = $node->isArrayLike() ? [] : (object)[];
+		}
+
 		return $this->traverse($data, $segments);
 	}
 }
