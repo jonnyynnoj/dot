@@ -136,4 +136,92 @@ class DotTest extends TestCase
 		self::assertEquals('foo', $dot->get('nested.data[1].property'));
 		self::assertEquals('value', $dot->get('nested.data[2].property'));
 	}
+
+	/** @test */
+	public function it_can_traverse_through_expanded_array()
+	{
+		$data = [
+			'nested' => [
+				'data' => [
+					['property' => 'value'],
+					['property' => 'value'],
+					['property' => 'value'],
+				]
+			]
+		];
+
+		$dot = Dot::from($data);
+		$dot->set('nested.data.*.property', 'foo');
+		self::assertEquals('foo', $dot->get('nested.data[0].property'));
+		self::assertEquals('foo', $dot->get('nested.data[1].property'));
+		self::assertEquals(['foo', 'foo', 'foo'], $dot->get('nested.data.*.property'));
+	}
+
+	/** @test */
+	public function it_can_traverse_through_multiple_expanded_arrays()
+	{
+		$data = [
+			'nested' => [
+				'data' => [
+					[
+						'property' => [
+							['test' => 'value'],
+							['test' => 'bar']
+						]
+					],
+					[
+						'property' => [
+							['test' => 'value'],
+							['test' => 'bar']
+						]
+					],
+					[
+						'property' => [
+							['test' => 'value'],
+							['test' => 'bar']
+						]
+					],
+				]
+			]
+		];
+
+		$dot = Dot::from($data);
+		$dot->set('nested.data.*.property.*.test', 'foo');
+		self::assertEquals('foo', $dot->get('nested.data.0.property.0.test'));
+		self::assertEquals('foo', $dot->get('nested.data.1.property.1.test'));
+
+		$expected = [
+			['foo', 'foo'],
+			['foo', 'foo'],
+			['foo', 'foo'],
+		];
+
+		self::assertEquals($expected, $dot->get('nested.data.*.property.*.test'));
+	}
+
+	/** @test */
+	public function it_can_handle_expand_as_last_key()
+	{
+		$data = [
+			'nested' => [
+				'data' => [
+					['property' => ['value1', 'value2']],
+					['property' => ['value1', 'value2']],
+					['property' => ['value1', 'value2']],
+				]
+			]
+		];
+
+		$dot = Dot::from($data);
+		$dot->set('nested.data.*.property.*', 'foo');
+		self::assertEquals(['foo', 'foo'], $dot->get('nested.data.0.property'));
+
+		$expected = [
+			['foo', 'foo'],
+			['foo', 'foo'],
+			['foo', 'foo'],
+		];
+
+		self::assertEquals($expected, $dot->get('nested.data.*.property.*'));
+	}
 }
