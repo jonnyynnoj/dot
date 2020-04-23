@@ -46,6 +46,11 @@ class Node
 		}
 
 		$method = substr($this->key, 1);
+
+		if (!is_callable([$this->item, $method])) {
+			throw DotException::fromInvalidMethod($this->item, $method);
+		}
+
 		return $this->item->$method($value);
 	}
 

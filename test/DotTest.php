@@ -166,6 +166,23 @@ class DotTest extends TestCase
 		self::assertEquals(['foo', 'bar', 'baz'], $data['nested']['property']->getValues());
 	}
 
+	/**
+	 * @test
+	 * @expectedException \Noj\Dot\DotException
+	 * @expectedExceptionMessage Method foo is not callable on stdClass
+	 */
+	public function it_handles_method_doesnt_exist()
+	{
+		$data = [
+			'nested' => [
+				'property' => new \stdClass()
+			]
+		];
+
+		$dot = Dot::from($data);
+		$dot->set('nested.property.@foo', 'value');
+	}
+
 	/** @test */
 	public function it_can_traverse_through_array_index()
 	{
