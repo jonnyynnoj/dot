@@ -11,9 +11,12 @@ class DotTest extends TestCase
 	public function it_can_get_a_top_level_property()
 	{
 		$data = ['property' => ['foo' => 'bar']];
-
 		$value = Dot::from($data)->get('property');
 		self::assertEquals(['foo' => 'bar'], $value);
+
+		$data = ['foo', 'bar'];
+		$value = Dot::from($data)->get('0');
+		self::assertEquals('foo', $value);
 	}
 
 	/** @test */
