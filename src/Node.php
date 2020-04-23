@@ -16,8 +16,9 @@ class Node
 	public function &accessValue()
 	{
 		if ($this->isMethodCall()) {
-			$return = $this->callMethod();
-			return $return;
+			$method = $this->getMethod();
+			$result = $method ? $method->invoke($this->item) : null;
+			return $result;
 		}
 
 		if ($this->isArrayLike()) {
@@ -35,23 +36,15 @@ class Node
 		return null;
 	}
 
-	public function callMethod($value = null)
+	public function getMethod()
 	{
-		if (is_array($value) && substr($this->key, -1) === '*') {
-			foreach ($value as $param) {
-				$method = substr($this->key, 0, -1);
-				$this->withMethod($method)->callMethod($param);
-			}
-			return null;
-		}
-
 		$method = substr($this->key, 1);
 
 		if (!is_callable([$this->item, $method])) {
 			return null;
 		}
 
-		return $this->item->$method($value);
+		return new \ReflectionMethod($this->item, $method);
 	}
 
 	public function isMethodCall(): bool
@@ -69,9 +62,9 @@ class Node
 		return $this->isBranch() && $this->isArrayLike();
 	}
 
-	public function withMethod(string $method): Node
+	public function withKey(string $key): Node
 	{
-		return new self($this->item, $method);
+		return new self($this->item, $key);
 	}
 
 	public function isArrayLike(): bool

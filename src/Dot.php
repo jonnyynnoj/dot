@@ -67,8 +67,16 @@ class Dot
 			return;
 		}
 
-		if ($node->isMethodCall()) {
-			$node->callMethod($value);
+		if (is_array($value) && substr($node->key, -1) === '*') {
+			foreach ($value as $param) {
+				$name = substr($node->key, 0, -1);
+				$this->recursiveSet($node->withKey($name), $param);
+			}
+			return;
+		}
+
+		if ($node->isMethodCall() && $method = $node->getMethod()) {
+			$method->invoke($node->item, $value);
 			return;
 		}
 
