@@ -39,9 +39,16 @@ class Dot
 		return $node->accessValue();
 	}
 
-	public function set(string $path, $value)
+	public function set($paths, $value = null)
 	{
-		$node = $this->parser->parse($this->data, $path);
+		if (is_array($paths)) {
+			foreach ($paths as $path => $pathValue) {
+				$this->set($path, $pathValue);
+			}
+			return;
+		}
+
+		$node = $this->parser->parse($this->data, $paths);
 		$this->recursiveSet($node, $value);
 	}
 

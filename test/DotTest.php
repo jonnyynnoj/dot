@@ -263,4 +263,28 @@ class DotTest extends TestCase
 
 		self::assertEquals($expected, $dot->get('nested.data.*.property.*'));
 	}
+
+	/** @test */
+	public function it_can_set_multiple_paths()
+	{
+		$data = [
+			'nested' => [
+				'data' => [
+					'property' => 'value'
+				],
+				'another' => [
+					'property' => 'value'
+				]
+			]
+		];
+
+		$dot = Dot::from($data);
+		$dot->set([
+			'nested.data.property' => 'foo',
+			'nested.another.property' => 'bar',
+		]);
+
+		self::assertEquals('foo', $dot->get('nested.data.property'));
+		self::assertEquals('bar', $dot->get('nested.another.property'));
+	}
 }
