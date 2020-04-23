@@ -7,35 +7,32 @@ class Parser
 	public function parse(&$data, string $path)
 	{
 		$segments = explode('.', $path);
-		return $this->traverse($data, $segments);
+		$key = array_shift($segments);
+		return $this->traverse(new Node($data, $key), $segments);
 	}
 
-	/**
-	 * @return Node|Node[]
-	 */
-	private function traverse(&$data, array $segments)
+	private function traverse(Node $node, array $segments)
 	{
-		$key = array_shift($segments);
-		$node = new Node($data, $key);
-
 		if (count($segments) === 0) {
 			return $node;
 		}
 
-		if ($key === '*' && $node->isArrayLike()) {
+		$nextKey = array_shift($segments);
+
+		if ($node->isBranchable()) {
 			$results = [];
-			foreach ($node->item as &$item) {
-				$results[] = $this->traverse($item, $segments);
+			foreach ($node->item as &$nextValue) {
+				$results[] = $this->traverse(new Node($nextValue, $nextKey), $segments);
 			}
 			return $results;
 		}
 
-		$data = &$node->accessValue();
+		$nextValue = &$node->accessValue();
 
-		if ($data === null) {
-			$data = $node->isArrayLike() ? [] : (object)[];
+		if ($nextValue === null) {
+			$nextValue = $node->isArrayLike() ? [] : (object)[];
 		}
 
-		return $this->traverse($data, $segments);
+		return $this->traverse(new Node($nextValue, $nextKey), $segments);
 	}
 }

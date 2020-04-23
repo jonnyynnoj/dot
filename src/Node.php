@@ -21,7 +21,7 @@ class Node
 		}
 
 		if ($this->isArrayLike()) {
-			if ($this->isExpand()) {
+			if ($this->isBranch()) {
 				return $this->item;
 			}
 
@@ -54,12 +54,17 @@ class Node
 		return is_object($this->item) && strpos($this->key, '@') === 0;
 	}
 
-	public function isExpand(): bool
+	public function isBranch(): bool
 	{
 		return $this->key === '*';
 	}
 
-	public function withMethod(string $method)
+	public function isBranchable(): bool
+	{
+		return $this->isBranch() && $this->isArrayLike();
+	}
+
+	public function withMethod(string $method): Node
 	{
 		return new self($this->item, $method);
 	}

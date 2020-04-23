@@ -72,7 +72,7 @@ class Dot
 			return;
 		}
 
-		if ($node->isExpand()) {
+		if ($node->isBranchable()) {
 			foreach ($node->item as &$item) {
 				$item = $value;
 			}
