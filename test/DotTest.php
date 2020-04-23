@@ -287,4 +287,18 @@ class DotTest extends TestCase
 		self::assertEquals('foo', $dot->get('nested.data.property'));
 		self::assertEquals('bar', $dot->get('nested.another.property'));
 	}
+
+	/** @test */
+	public function it_returns_null_if_path_doesnt_exist()
+	{
+		$data = [
+			'key' => []
+		];
+
+		$dot = Dot::from($data);
+		self::assertNull($dot->get('foo'));
+		self::assertNull($dot->get('key.foo'));
+		self::assertNull($dot->get('key.foo.bar'));
+		self::assertNull($dot->get('key.foo.bar.baz'));
+	}
 }

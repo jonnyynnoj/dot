@@ -20,19 +20,19 @@ class Node
 			return $return;
 		}
 
-		if (is_object($this->item) && property_exists($this->item, $this->key)) {
+		if ($this->isArrayLike()) {
+			if ($this->isExpand()) {
+				return $this->item;
+			}
+
+			return $this->item[$this->key];
+		}
+
+		if (is_object($this->item)) {
 			return $this->item->{$this->key};
 		}
 
-		if (!is_array($this->item) && !($this->item instanceof \ArrayAccess)) {
-			throw new \Exception('Not an array or ArrayAccess');
-		}
-
-		if ($this->isExpand()) {
-			return $this->item;
-		}
-
-		return $this->item[$this->key];
+		return null;
 	}
 
 	public function callMethod($value = null)
@@ -62,5 +62,10 @@ class Node
 	public function withMethod(string $method)
 	{
 		return new self($this->item, $method);
+	}
+
+	public function isArrayLike(): bool
+	{
+		return is_array($this->item) || $this->item instanceof \Traversable;
 	}
 }

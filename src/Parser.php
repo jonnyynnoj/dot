@@ -22,7 +22,7 @@ class Parser
 			return $node;
 		}
 
-		if ($key === '*' && $this->isArrayLike($data)) {
+		if ($key === '*' && $node->isArrayLike()) {
 			$results = [];
 			foreach ($data as &$item) {
 				$results[] = $this->traverse($item, $segments);
@@ -32,10 +32,5 @@ class Parser
 
 		$data = &$node->accessValue();
 		return $this->traverse($data, $segments);
-	}
-
-	private function isArrayLike($value): bool
-	{
-		return is_array($value) || $value instanceof \Traversable;
 	}
 }
