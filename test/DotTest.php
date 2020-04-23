@@ -124,6 +124,18 @@ class DotTest extends TestCase
 	}
 
 	/** @test */
+	public function it_returns_null_if_getter_doesnt_exist()
+	{
+		$data = ['key' => null];
+
+		$dot = Dot::from($data);
+
+		self::assertNull($dot->get('@getSomething'));
+		self::assertNull($dot->get('key.@getSomething'));
+		self::assertNull($dot->get('key.@getSomething.foo'));
+	}
+
+	/** @test */
 	public function it_can_call_setter()
 	{
 		$data = [
@@ -167,23 +179,6 @@ class DotTest extends TestCase
 		$dot->set('nested.property.@addValue*', ['foo', 'bar', 'baz']);
 		self::assertEquals(['foo', 'bar', 'baz'], $dot->get('nested.property.@getValues'));
 		self::assertEquals(['foo', 'bar', 'baz'], $data['nested']['property']->getValues());
-	}
-
-	/**
-	 * @test
-	 * @expectedException \Noj\Dot\DotException
-	 * @expectedExceptionMessage Method foo is not callable on stdClass
-	 */
-	public function it_handles_method_doesnt_exist()
-	{
-		$data = [
-			'nested' => [
-				'property' => new \stdClass()
-			]
-		];
-
-		$dot = Dot::from($data);
-		$dot->set('nested.property.@foo', 'value');
 	}
 
 	/** @test */

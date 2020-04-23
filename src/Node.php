@@ -48,7 +48,7 @@ class Node
 		$method = substr($this->key, 1);
 
 		if (!is_callable([$this->item, $method])) {
-			throw DotException::fromInvalidMethod($this->item, $method);
+			return null;
 		}
 
 		return $this->item->$method($value);
@@ -56,7 +56,7 @@ class Node
 
 	public function isMethodCall(): bool
 	{
-		return is_object($this->item) && strpos($this->key, '@') === 0;
+		return strpos($this->key, '@') === 0;
 	}
 
 	public function isBranch(): bool
