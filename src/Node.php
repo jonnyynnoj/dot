@@ -16,7 +16,8 @@ class Node
 	public function &accessValue()
 	{
 		if ($this->isMethodCall()) {
-			return $this->callMethod();
+			$return = $this->callMethod();
+			return $return;
 		}
 
 		if (is_object($this->item)) {
