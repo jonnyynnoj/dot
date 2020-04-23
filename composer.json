@@ -1,5 +1,5 @@
 {
-    "name": "fabrica/dot",
+    "name": "noj/dot",
 	"description": "Nested array/object access through dot notation",
     "type": "library",
     "license": "MIT",
@@ -20,12 +20,12 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Fabrica\\Dot\\": "src/"
+			"Noj\\Dot\\": "src/"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Fabrica\\Dot\\Test\\": "test/"
+			"Noj\\Dot\\Test\\": "test/"
 		}
 	},
 	"config": {

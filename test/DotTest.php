@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Fabrica\Dot\Test;
+namespace Noj\Dot\Test;
 
-use Fabrica\Dot\Dot;
+use Noj\Dot\Dot;
 use PHPUnit\Framework\TestCase;
 
 class DotTest extends TestCase
