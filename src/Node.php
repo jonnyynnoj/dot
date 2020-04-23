@@ -20,7 +20,7 @@ class Node
 			return $return;
 		}
 
-		if (is_object($this->item)) {
+		if (is_object($this->item) && property_exists($this->item, $this->key)) {
 			return $this->item->{$this->key};
 		}
 
