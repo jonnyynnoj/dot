@@ -117,6 +117,13 @@ class Dot
 
 	private function callMethod($item, $key, $value = null)
 	{
+		if (is_array($value) && substr($key, -1) === '*') {
+			array_map(function ($param) use ($item, $key) {
+				$this->callMethod($item, substr($key, 0, -1), $param);
+			}, $value);
+			return null;
+		}
+
 		$method = substr($key, 1);
 		return $item->$method($value);
 	}

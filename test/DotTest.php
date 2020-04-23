@@ -118,6 +118,28 @@ class DotTest extends TestCase
 	}
 
 	/** @test */
+	public function it_can_call_setter_multiple_times()
+	{
+		$data = [
+			'nested' => [
+				'property' => new class {
+					private $values = [];
+					public function getValues() {
+						return $this->values;
+					}
+					public function addValue($value) {
+						$this->values[] = $value;
+					}
+				}
+			]
+		];
+
+		$dot = Dot::from($data);
+		$dot->set('nested.property.@addValue*', ['foo', 'bar', 'baz']);
+		self::assertEquals(['foo', 'bar', 'baz'], $dot->get('nested.property')->getValues());
+	}
+
+	/** @test */
 	public function it_can_traverse_through_array_index()
 	{
 		$data = [
