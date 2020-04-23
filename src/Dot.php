@@ -107,10 +107,6 @@ class Dot
 			return $item;
 		}
 
-		if (preg_match('/(.+)\[(\d+)\]$/', $key, $matches)) {
-			return $item[$matches[1]][$matches[2]];
-		}
-
 		return $item[$key];
 	}
 
