@@ -6,9 +6,9 @@ class Dot
 {
 	private $data;
 
-	public function __construct($data)
+	public function __construct(&$data)
 	{
-		$this->data = $data;
+		$this->data = &$data;
 	}
 
 	public static function from(&$data): self

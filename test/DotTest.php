@@ -36,6 +36,7 @@ class DotTest extends TestCase
 		$dot = Dot::from($data);
 		$dot->set('nested.data.property', 'foo');
 		self::assertEquals('foo', $dot->get('nested.data.property'));
+		self::assertEquals('foo', $data['nested']['data']['property']);
 	}
 
 	/** @test */
@@ -67,6 +68,7 @@ class DotTest extends TestCase
 		$dot = Dot::from($data);
 		$dot->set('nested.data.property', 'foo');
 		self::assertEquals('foo', $dot->get('nested.data.property'));
+		self::assertEquals('foo', $data['nested']->data->property);
 	}
 
 	/** @test */
@@ -115,6 +117,7 @@ class DotTest extends TestCase
 		$dot = Dot::from($data);
 		$dot->set('nested.property.@setValue', 'value');
 		self::assertEquals('value', $dot->get('nested.property.@getValue'));
+		self::assertEquals('value', $data['nested']['property']->getValue());
 	}
 
 	/** @test */
@@ -136,7 +139,8 @@ class DotTest extends TestCase
 
 		$dot = Dot::from($data);
 		$dot->set('nested.property.@addValue*', ['foo', 'bar', 'baz']);
-		self::assertEquals(['foo', 'bar', 'baz'], $dot->get('nested.property')->getValues());
+		self::assertEquals(['foo', 'bar', 'baz'], $dot->get('nested.property.@getValues'));
+		self::assertEquals(['foo', 'bar', 'baz'], $data['nested']['property']->getValues());
 	}
 
 	/** @test */
@@ -157,6 +161,10 @@ class DotTest extends TestCase
 		self::assertEquals('value', $dot->get('nested.data.0.property'));
 		self::assertEquals('foo', $dot->get('nested.data.1.property'));
 		self::assertEquals('value', $dot->get('nested.data.2.property'));
+
+		self::assertEquals('value', $data['nested']['data'][0]['property']);
+		self::assertEquals('foo', $data['nested']['data'][1]['property']);
+		self::assertEquals('value', $data['nested']['data'][2]['property']);
 	}
 
 	/** @test */
@@ -176,7 +184,12 @@ class DotTest extends TestCase
 		$dot->set('nested.data.*.property', 'foo');
 		self::assertEquals('foo', $dot->get('nested.data.0.property'));
 		self::assertEquals('foo', $dot->get('nested.data.1.property'));
+		self::assertEquals('foo', $dot->get('nested.data.2.property'));
 		self::assertEquals(['foo', 'foo', 'foo'], $dot->get('nested.data.*.property'));
+
+		self::assertEquals('foo', $data['nested']['data'][0]['property']);
+		self::assertEquals('foo', $data['nested']['data'][1]['property']);
+		self::assertEquals('foo', $data['nested']['data'][2]['property']);
 	}
 
 	/** @test */
@@ -210,7 +223,11 @@ class DotTest extends TestCase
 		$dot = Dot::from($data);
 		$dot->set('nested.data.*.property.*.test', 'foo');
 		self::assertEquals('foo', $dot->get('nested.data.0.property.0.test'));
+		self::assertEquals('foo', $dot->get('nested.data.0.property.1.test'));
+		self::assertEquals('foo', $dot->get('nested.data.1.property.0.test'));
 		self::assertEquals('foo', $dot->get('nested.data.1.property.1.test'));
+		self::assertEquals('foo', $dot->get('nested.data.2.property.0.test'));
+		self::assertEquals('foo', $dot->get('nested.data.2.property.1.test'));
 
 		$expected = [
 			['foo', 'foo'],
