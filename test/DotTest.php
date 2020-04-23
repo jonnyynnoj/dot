@@ -224,23 +224,24 @@ class DotTest extends TestCase
 		$data = [
 			'nested' => [
 				'data' => [
-					['property' => 'value'],
-					['property' => 'value'],
-					['property' => 'value'],
+					['property' => ['bar' => 'value1']],
+					['property' => ['bar' => 'value2']],
+					['property' => ['bar' => 'value2']],
 				]
 			]
 		];
 
 		$dot = Dot::from($data);
-		$dot->set('nested.data.*.property', 'foo');
-		self::assertEquals('foo', $dot->get('nested.data.0.property'));
-		self::assertEquals('foo', $dot->get('nested.data.1.property'));
-		self::assertEquals('foo', $dot->get('nested.data.2.property'));
-		self::assertEquals(['foo', 'foo', 'foo'], $dot->get('nested.data.*.property'));
+		$dot->set('nested.data.*.property.bar', 'foo');
 
-		self::assertEquals('foo', $data['nested']['data'][0]['property']);
-		self::assertEquals('foo', $data['nested']['data'][1]['property']);
-		self::assertEquals('foo', $data['nested']['data'][2]['property']);
+		self::assertEquals('foo', $dot->get('nested.data.0.property.bar'));
+		self::assertEquals('foo', $dot->get('nested.data.1.property.bar'));
+		self::assertEquals('foo', $dot->get('nested.data.2.property.bar'));
+		self::assertEquals(['foo', 'foo', 'foo'], $dot->get('nested.data.*.property.bar'));
+
+		self::assertEquals('foo', $data['nested']['data'][0]['property']['bar']);
+		self::assertEquals('foo', $data['nested']['data'][1]['property']['bar']);
+		self::assertEquals('foo', $data['nested']['data'][2]['property']['bar']);
 	}
 
 	/** @test */
