@@ -181,6 +181,19 @@ class DotTest extends TestCase
 		self::assertEquals(['foo', 'bar', 'baz'], $data['nested']['property']->getValues());
 	}
 
+	/**
+	 * @test
+	 * @expectedException \Noj\Dot\DotException
+	 * @expectedExceptionMessage Can't call method setValue on array
+	 */
+	public function what_does_it_do_if_method_doesnt_exist()
+	{
+		$data = [];
+
+		$dot = Dot::from($data);
+		$dot->set('property.ddd.@setValue', 'value');
+	}
+
 	/** @test */
 	public function it_can_traverse_through_array_index()
 	{

@@ -75,9 +75,12 @@ class Dot
 			return;
 		}
 
-		if ($node->isMethodCall() && $method = $node->getMethod()) {
-			$method->invoke($node->item, $value);
-			return;
+		if ($node->isMethodCall()) {
+			if ($method = $node->getMethod()) {
+				$method->invoke($node->item, $value);
+				return;
+			}
+			throw DotException::fromInvalidSetter($node);
 		}
 
 		if ($node->isBranchable()) {

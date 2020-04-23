@@ -38,13 +38,18 @@ class Node
 
 	public function getMethod()
 	{
-		$method = substr($this->key, 1);
+		$method = $this->getMethodName();
 
 		if (!is_callable([$this->item, $method])) {
 			return null;
 		}
 
 		return new \ReflectionMethod($this->item, $method);
+	}
+
+	public function getMethodName()
+	{
+		return substr($this->key, 1);
 	}
 
 	public function isMethodCall(): bool
