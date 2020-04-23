@@ -8,6 +8,15 @@ use PHPUnit\Framework\TestCase;
 class DotTest extends TestCase
 {
 	/** @test */
+	public function it_can_get_a_top_level_property()
+	{
+		$data = ['property' => ['foo' => 'bar']];
+
+		$value = Dot::from($data)->get('property');
+		self::assertEquals(['foo' => 'bar'], $value);
+	}
+
+	/** @test */
 	public function it_can_get_path_through_arrays()
 	{
 		$data = [
@@ -20,6 +29,20 @@ class DotTest extends TestCase
 
 		$value = Dot::from($data)->get('nested.data.property');
 		self::assertEquals('value', $value);
+	}
+
+	/** @test */
+	public function it_returns_null_if_path_doesnt_exist()
+	{
+		$data = [
+			'key' => []
+		];
+
+		$dot = Dot::from($data);
+		self::assertNull($dot->get('foo'));
+		self::assertNull($dot->get('key.foo'));
+		self::assertNull($dot->get('key.foo.bar'));
+		self::assertNull($dot->get('key.foo.bar.baz'));
 	}
 
 	/** @test */
@@ -286,20 +309,6 @@ class DotTest extends TestCase
 
 		self::assertEquals('foo', $dot->get('nested.data.property'));
 		self::assertEquals('bar', $dot->get('nested.another.property'));
-	}
-
-	/** @test */
-	public function it_returns_null_if_path_doesnt_exist()
-	{
-		$data = [
-			'key' => []
-		];
-
-		$dot = Dot::from($data);
-		self::assertNull($dot->get('foo'));
-		self::assertNull($dot->get('key.foo'));
-		self::assertNull($dot->get('key.foo.bar'));
-		self::assertNull($dot->get('key.foo.bar.baz'));
 	}
 
 	/** @test */
