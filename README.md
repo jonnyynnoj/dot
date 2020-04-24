@@ -10,7 +10,7 @@ composer require noj/dot
 
 ## Usage
 
-### Get
+### get(string $path)
 
 Access nested array keys and object properties using dot syntax:
 
@@ -73,7 +73,7 @@ $data = [
 (new Dot($data))->get('foo.@getBar.bar'); // 'value'
 ```
 
-### Set
+### set(array|string $paths, mixed $value)
 
 You can set nested values using the same syntax:
 
