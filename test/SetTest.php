@@ -129,7 +129,7 @@ class SetTest extends TestCase
 
 	/**
 	 * @test
-	 * @expectedException \Noj\Dot\DotException
+	 * @expectedException \Noj\Dot\Exception\InvalidMethodException
 	 * @expectedExceptionMessage Can't call method setValue on array
 	 */
 	public function it_throws_exception_if_setter_not_callable()

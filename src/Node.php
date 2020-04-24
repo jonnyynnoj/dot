@@ -2,6 +2,8 @@
 
 namespace Noj\Dot;
 
+use Noj\Dot\Exception\InvalidMethodException;
+
 class Node
 {
 	public $item;
@@ -18,10 +20,13 @@ class Node
 		return new self($this->item, $key);
 	}
 
+	/**
+	 * @throws InvalidMethodException
+	 * @return mixed|null
+	 */
 	public function &accessValue()
 	{
-		if ($this->isMethodCall()) {
-			$method = $this->getMethod();
+		if ($method = $this->getMethod()) {
 			$result = $method ? $method->invoke($this->item) : null;
 			return $result;
 		}
@@ -43,23 +48,27 @@ class Node
 
 	public function getMethod()
 	{
+		if (!$this->isMethodCall()) {
+			return null;
+		}
+
 		$method = $this->getMethodName();
 
 		if (!is_callable([$this->item, $method])) {
-			return null;
+			throw InvalidMethodException::fromNode($this);
 		}
 
 		return new \ReflectionMethod($this->item, $method);
 	}
 
-	public function getMethodName()
-	{
-		return substr($this->key, 1);
-	}
-
 	public function isMethodCall(): bool
 	{
 		return strpos($this->key, '@') === 0;
+	}
+
+	public function getMethodName()
+	{
+		return substr($this->key, 1);
 	}
 
 	public function targetsAllArrayKeys(): bool

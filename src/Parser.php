@@ -2,6 +2,8 @@
 
 namespace Noj\Dot;
 
+use Noj\Dot\Exception\InvalidMethodException;
+
 class Parser
 {
 	private $createMissingPaths;
@@ -34,7 +36,11 @@ class Parser
 			return $results;
 		}
 
-		$nextValue = &$node->accessValue();
+		try {
+			$nextValue = &$node->accessValue();
+		} catch (InvalidMethodException $e) {
+			$nextValue = null;
+		}
 
 		if ($nextValue === null) {
 			if (!$this->createMissingPaths) {

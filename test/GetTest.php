@@ -91,11 +91,12 @@ class GetTest extends TestCase
 	/** @test */
 	public function it_returns_null_if_getter_doesnt_exist()
 	{
-		$data = ['key' => null];
+		$data = ['key' => []];
 
 		$dot = Dot::from($data);
 
 		self::assertNull($dot->get('@getSomething'));
+		self::assertNull($dot->get('invalid.@getSomething'));
 		self::assertNull($dot->get('key.@getSomething'));
 		self::assertNull($dot->get('key.@getSomething.foo'));
 	}

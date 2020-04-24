@@ -2,6 +2,9 @@
 
 namespace Noj\Dot;
 
+use Noj\Dot\Exception\DotException;
+use Noj\Dot\Exception\InvalidMethodException;
+
 class Dot
 {
 	private $data;
@@ -33,7 +36,11 @@ class Dot
 			return array_map([$this, 'recursiveGet'], $node);
 		}
 
-		return $node->accessValue();
+		try {
+			return $node->accessValue();
+		} catch (InvalidMethodException $e) {
+			return null;
+		}
 	}
 
 	public function set($paths, $value = null)
@@ -72,12 +79,9 @@ class Dot
 			return;
 		}
 
-		if ($node->isMethodCall()) {
-			if ($method = $node->getMethod()) {
-				$method->invoke($node->item, $value);
-				return;
-			}
-			throw DotException::fromInvalidSetter($node);
+		if ($method = $node->getMethod()) {
+			$method->invoke($node->item, $value);
+			return;
 		}
 
 		if ($node->targetsAllArrayKeys()) {
