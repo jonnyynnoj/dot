@@ -80,7 +80,7 @@ class Dot
 			throw DotException::fromInvalidSetter($node);
 		}
 
-		if ($node->isBranchable()) {
+		if ($node->targetsAllArrayKeys()) {
 			foreach ($node->item as &$item) {
 				$item = $value;
 			}

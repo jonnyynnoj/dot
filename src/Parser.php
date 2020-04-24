@@ -26,7 +26,7 @@ class Parser
 
 		$nextKey = array_shift($segments);
 
-		if ($node->isBranchable()) {
+		if ($node->targetsAllArrayKeys()) {
 			$results = [];
 			foreach ($node->item as &$nextValue) {
 				$results[] = $this->traverse(new Node($nextValue, $nextKey), $segments);

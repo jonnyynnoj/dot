@@ -13,6 +13,11 @@ class Node
 		$this->key = $key;
 	}
 
+	public function withKey(string $key): Node
+	{
+		return new self($this->item, $key);
+	}
+
 	public function &accessValue()
 	{
 		if ($this->isMethodCall()) {
@@ -21,11 +26,11 @@ class Node
 			return $result;
 		}
 
-		if ($this->isArrayLike()) {
-			if ($this->isBranch()) {
-				return $this->item;
-			}
+		if ($this->targetsAllArrayKeys()) {
+			return $this->item;
+		}
 
+		if ($this->isArrayLike()) {
 			return $this->item[$this->key];
 		}
 
@@ -57,19 +62,9 @@ class Node
 		return strpos($this->key, '@') === 0;
 	}
 
-	public function isBranch(): bool
+	public function targetsAllArrayKeys(): bool
 	{
-		return $this->key === '*';
-	}
-
-	public function isBranchable(): bool
-	{
-		return $this->isBranch() && $this->isArrayLike();
-	}
-
-	public function withKey(string $key): Node
-	{
-		return new self($this->item, $key);
+		return $this->isArrayLike() && $this->key === '*';
 	}
 
 	public function isArrayLike(): bool
