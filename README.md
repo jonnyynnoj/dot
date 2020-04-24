@@ -56,7 +56,6 @@ $data = [
 ];
 
 $dot = new Dot($data);
-$dot->get('nested.data.*.foo') // [['bar' => 'value1'], ['bar' => 'value2'], ['bar' => 'value3']]
 $dot->get('nested.data.*.foo.bar') // ['value1', 'value2', 'value3']
 ```
 
@@ -92,6 +91,17 @@ $dot->set('foo.bar.baz', 'something');
 echo $dot->get('foo.bar.baz'); // 'something'
 echo $data['foo']['bar']['baz']; // 'something'
 ```
+
+Set multiple values at once using the array syntax:
+
+```php
+$dot->set([
+    'path.to.first.value' => 'something',
+    'path.to.second.value' => 'something else',
+]):
+```
+
+#### Invoke Setter
 
 You can call a setter method:
 
