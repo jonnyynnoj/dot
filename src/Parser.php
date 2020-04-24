@@ -4,6 +4,13 @@ namespace Noj\Dot;
 
 class Parser
 {
+	private $createMissingPaths;
+
+	public function __construct($createMissingPaths = false)
+	{
+		$this->createMissingPaths = $createMissingPaths;
+	}
+
 	public function parse(&$data, string $path)
 	{
 		$segments = explode('.', $path);
@@ -30,6 +37,10 @@ class Parser
 		$nextValue = &$node->accessValue();
 
 		if ($nextValue === null) {
+			if (!$this->createMissingPaths) {
+				return $node;
+			}
+
 			$nextValue = $node->isArrayLike() ? [] : (object)[];
 		}
 

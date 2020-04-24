@@ -4,12 +4,10 @@ namespace Noj\Dot;
 
 class Dot
 {
-	private $parser;
 	private $data;
 
 	public function __construct(&$data)
 	{
-		$this->parser = new Parser();
 		$this->data = &$data;
 	}
 
@@ -20,7 +18,7 @@ class Dot
 
 	public function get(string $path)
 	{
-		$node = $this->parser->parse($this->data, $path);
+		$node = (new Parser())->parse($this->data, $path);
 		return $this->recursiveGet($node);
 	}
 
@@ -48,7 +46,7 @@ class Dot
 			return;
 		}
 
-		$node = $this->parser->parse($this->data, $paths);
+		$node = (new Parser(true))->parse($this->data, $paths);
 		$this->recursiveSet($node, $value);
 	}
 

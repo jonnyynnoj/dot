@@ -44,6 +44,7 @@ class GetTest extends TestCase
 		self::assertNull($dot->get('key.foo'));
 		self::assertNull($dot->get('key.foo.bar'));
 		self::assertNull($dot->get('key.foo.bar.baz'));
+		self::assertFalse(isset($data['key']['foo']));
 	}
 
 	/** @test */
