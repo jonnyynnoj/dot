@@ -87,7 +87,7 @@ class Dot
 			return;
 		}
 
-		$r = &$node->accessValue();
-		$r = $value;
+		$currentValue = &$node->accessValue();
+		$currentValue = $value;
 	}
 }
