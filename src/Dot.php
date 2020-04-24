@@ -25,7 +25,6 @@ class Dot
 	/**
 	 * @param Node|Node[] $node
 	 *
-	 * @throws \Exception
 	 * @return mixed
 	 */
 	private function recursiveGet($node)
@@ -54,7 +53,7 @@ class Dot
 	 * @param Node|Node[] $node
 	 * @param mixed       $value
 	 *
-	 * @throws \Exception
+	 * @throws DotException
 	 */
 	private function recursiveSet($node, $value)
 	{
