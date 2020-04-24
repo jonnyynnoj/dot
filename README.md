@@ -42,7 +42,7 @@ $data = ['foo' => ['bar' => 1]];
 (new Dot($data))->get('foo.baz'); // null
 ```
 
-You can pluck values from multiple paths:
+You can pluck values from multidimensional arrays using the `*` syntax:
 
 ```php
 $data = [
@@ -81,18 +81,37 @@ You can set nested values using the same syntax:
 $data = [
     'foo' => (object)[
         'bar' => [
-            'baz' => 'value'
+            ['baz' => 'value'],
+            ['baz' => 'value'],
         ]
     ]
 ];
 
 $dot = new Dot($data);
-$dot->set('foo.bar.baz', 'something');
-echo $dot->get('foo.bar.baz'); // 'something'
+$dot->set('foo.bar.0.baz', 'something');
+echo $dot->get('foo.bar.0.baz'); // 'something'
 echo $data['foo']['bar']['baz']; // 'something'
 ```
 
-Set multiple values at once using the array syntax:
+Set nested keys of a multidimensional array using the `*` syntax:
+
+```php
+$data = [
+    'nested' => [
+        'data' => [
+            ['foo' => ['bar' => 'value1']],
+            ['foo' => ['bar' => 'value2']],
+            ['foo' => ['bar' => 'value2']],
+        ]
+    ]
+];
+
+$dot = new Dot($data);
+$dot->set('nested.data.*.foo.bar', 'baz')
+$dot->get('nested.data.*.foo.bar') // ['baz', 'baz', 'baz']
+```
+
+You can set multiple paths at once by passing an array:
 
 ```php
 $dot->set([
@@ -121,7 +140,7 @@ echo $dot->get('foo.bar'); // 'value'
 echo $data['foo']->bar; // 'value'
 ```
 
-Or call a setter multiple times for each value of an array:
+Or call a setter for each value of an array:
 
 ```php
 $data = [
