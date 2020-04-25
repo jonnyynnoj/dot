@@ -94,4 +94,9 @@ class Dot
 		$currentValue = &$node->accessValue();
 		$currentValue = $value;
 	}
+
+	public function has(string $path): bool
+	{
+		return $this->get($path) !== null;
+	}
 }
