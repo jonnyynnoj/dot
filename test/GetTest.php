@@ -107,35 +107,42 @@ class GetTest extends TestCase
 		$data = [
 			[
 				'name' => 'group1',
-				'items' => [
-					['name' => 'item1'],
-					['name' => 'item3'],
-					['name' => 'item6']
+				'users' => [
+					'user1' => [
+						'items' => [
+							['name' => 'item1'],
+							['name' => 'item3'],
+							['name' => 'item6']
+						]
+					]
 				]
 			],
 			[
 				'name' => 'group2',
-				'items' => [
-					['name' => 'item2'],
+				'users' => [
+					'user2' => [
+						'items' => [
+							['name' => 'item2'],
+						]
+					]
 				]
 			],
 			[
 				'name' => 'group3',
-				'items' => [
-					['name' => 'item4'],
-					['name' => 'item5']
+				'users' => [
+					'user3' => [
+						'items' => [
+							['name' => 'item4'],
+							['name' => 'item5'],
+						]
+					]
 				]
 			],
 		];
 
 		$dot = Dot::from($data);
 
-		$expected = [
-			['item1', 'item3', 'item6'],
-			['item2'],
-			['item4', 'item5'],
-		];
-
-		self::assertEquals($expected, $dot->get('*.items.*.name'));
+		$expected = ['item1', 'item3', 'item6', 'item2', 'item4', 'item5',];
+		self::assertEquals($expected, $dot->get('*.users.*.items.*.name'));
 	}
 }

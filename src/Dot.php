@@ -2,8 +2,9 @@
 
 namespace Noj\Dot;
 
-use Noj\Dot\Exception\DotException;
 use Noj\Dot\Exception\InvalidMethodException;
+use Noj\Dot\Parser\Node;
+use Noj\Dot\Parser\Parser;
 
 class Dot
 {
@@ -21,26 +22,19 @@ class Dot
 
 	public function get(string $path)
 	{
-		$node = (new Parser())->parse($this->data, $path);
-		return $this->recursiveGet($node);
-	}
+		$parser = new Parser();
+		$nodeList = $parser->parse($this->data, $path);
 
-	/**
-	 * @param Node|Node[] $node
-	 *
-	 * @return mixed
-	 */
-	private function recursiveGet($node)
-	{
-		if (is_array($node)) {
-			return array_map([$this, 'recursiveGet'], $node);
-		}
+		$nodes = $nodeList->getLeafNodes();
+		$values = array_map(function (Node $node) {
+			try {
+				return $node->accessValue();
+			} catch (InvalidMethodException $e) {
+				return null;
+			}
+		}, $nodes);
 
-		try {
-			return $node->accessValue();
-		} catch (InvalidMethodException $e) {
-			return null;
-		}
+		return !$parser->branched ? $values[0] : $values;
 	}
 
 	public function set($paths, $value = null)
@@ -52,47 +46,32 @@ class Dot
 			return;
 		}
 
-		$node = (new Parser(true))->parse($this->data, $paths);
-		$this->recursiveSet($node, $value);
-	}
+		$nodeList = (new Parser(true))->parse($this->data, $paths);
 
-	/**
-	 * @param Node|Node[] $node
-	 * @param mixed       $value
-	 *
-	 * @throws DotException
-	 */
-	private function recursiveSet($node, $value)
-	{
-		if (is_array($node)) {
-			foreach ($node as $n) {
-				$this->recursiveSet($n, $value);
+		foreach ($nodeList->getLeafNodes() as $node) {
+			if (is_array($value) && substr($node->key, -1) === '*') {
+				foreach ($value as $param) {
+					$name = substr($node->key, 0, -1);
+					$node->withKey($name)->getMethod()->invoke($node->item, $param);
+				}
+				continue;
 			}
-			return;
-		}
 
-		if (is_array($value) && substr($node->key, -1) === '*') {
-			foreach ($value as $param) {
-				$name = substr($node->key, 0, -1);
-				$this->recursiveSet($node->withKey($name), $param);
+			if ($method = $node->getMethod()) {
+				$method->invoke($node->item, $value);
+				continue;
 			}
-			return;
-		}
 
-		if ($method = $node->getMethod()) {
-			$method->invoke($node->item, $value);
-			return;
-		}
-
-		if ($node->targetsAllArrayKeys()) {
-			foreach ($node->item as &$item) {
-				$item = $value;
+			if ($node->targetsAllArrayKeys()) {
+				foreach ($node->item as &$item) {
+					$item = $value;
+				}
+				continue;
 			}
-			return;
-		}
 
-		$currentValue = &$node->accessValue();
-		$currentValue = $value;
+			$currentValue = &$node->accessValue();
+			$currentValue = $value;
+		}
 	}
 
 	public function has(string $path): bool

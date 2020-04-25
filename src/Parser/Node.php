@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Noj\Dot;
+namespace Noj\Dot\Parser;
 
 use Noj\Dot\Exception\InvalidMethodException;
 

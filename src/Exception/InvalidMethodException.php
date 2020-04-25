@@ -2,7 +2,7 @@
 
 namespace Noj\Dot\Exception;
 
-use Noj\Dot\Node;
+use Noj\Dot\Parser\Node;
 
 class InvalidMethodException extends DotException
 {

@@ -1,39 +1,43 @@
 <?php declare(strict_types=1);
 
-namespace Noj\Dot;
+namespace Noj\Dot\Parser;
 
 use Noj\Dot\Exception\InvalidMethodException;
 
 class Parser
 {
 	private $createMissingPaths;
+	public $branched = false;
 
 	public function __construct($createMissingPaths = false)
 	{
 		$this->createMissingPaths = $createMissingPaths;
 	}
 
-	public function parse(&$data, string $path)
+	public function parse(&$data, string $path): NodeList
 	{
 		$segments = explode('.', $path);
+		$this->branched = in_array('*', $segments);
 		$key = array_shift($segments);
+
 		return $this->traverse(new Node($data, $key), $segments);
 	}
 
-	private function traverse(Node $node, array $segments)
+	private function traverse(Node $node, array $segments): NodeList
 	{
-		if (count($segments) === 0) {
-			return $node;
+		$nodeList = new NodeList();
+
+		if (empty($segments)) {
+			return $nodeList->add($node);
 		}
 
 		$nextKey = array_shift($segments);
 
 		if ($node->targetsAllArrayKeys()) {
-			$results = [];
 			foreach ($node->item as &$nextValue) {
-				$results[] = $this->traverse(new Node($nextValue, $nextKey), $segments);
+				$nodeList->add($this->traverse(new Node($nextValue, $nextKey), $segments));
 			}
-			return $results;
+			return $nodeList;
 		}
 
 		try {
@@ -44,7 +48,7 @@ class Parser
 
 		if ($nextValue === null) {
 			if (!$this->createMissingPaths) {
-				return $node;
+				return $nodeList->add($node);
 			}
 
 			$nextValue = $node->isArrayLike() ? [] : (object)[];
