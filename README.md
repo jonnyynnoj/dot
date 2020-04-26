@@ -43,7 +43,7 @@ $data = [
 ];
 ```
 
-### `Dot::get(string $path)`
+### `Dot::get(string $path): mixed`
 
 Access nested array keys and object properties using dot syntax:
 
@@ -77,7 +77,15 @@ $data = [
 (new Dot($data))->get('foo.@getBar.bar'); // 'value'
 ```
 
-### `Dot::set(array|string $paths, mixed $value)`
+### `Dot::has(string $path): bool`
+
+Returns true if path exists, false otherwise:
+
+```php
+$dot->has('groups.0.items.1.name'); // true
+```
+
+### `Dot::set(array|string $paths, mixed $value): void`
 
 You can set nested values using the same syntax:
 
