@@ -51,11 +51,10 @@ class Dot
 
 		foreach ($nodeList->getLeafNodes() as $node) {
 			if (is_array($value) && substr($node->segment->key, -1) === '*') {
+				$name = substr($node->segment->key, 0, -1);
+				$method = $node->withSegment(new Segment($name))->getMethod();
 				foreach ($value as $param) {
-					$name = substr($node->segment->key, 0, -1);
-					$node->withSegment(new Segment($name))
-						->getMethod()
-						->invoke($node->item, $param);
+					$method->invoke($node->item, $param);
 				}
 				continue;
 			}
