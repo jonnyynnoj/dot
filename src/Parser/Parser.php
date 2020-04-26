@@ -73,31 +73,26 @@ class Parser
 			}, explode('.', $path));
 		}
 
-		$remaining = $path;
 		$segments = [];
+		$key = '';
 
-		while ($remaining !== '') {
-			$nextDot = strpos($remaining, Segment::DELIMITER_ARRAY);
-			$nextArrow = strpos($remaining, Segment::DELIMITER_OBJECT);
-
-			if ($nextDot === false && $nextArrow === false) {
-				$segments[] = new Segment($remaining);
-				break;
+		for ($i = 0, $length = strlen($path); $i < $length; ++$i) {
+			$char = $path[$i];
+			if ($char === Segment::DELIMITER_ARRAY) {
+				$segments[] = new Segment($key);
+				$key = '';
+				continue;
 			}
-
-			if ($nextArrow === false || ($nextDot !== false && $nextDot < $nextArrow)) {
-				$pos = $nextDot;
-				$type = Segment::DELIMITER_ARRAY;
-			} else {
-				$pos = $nextArrow;
-				$type = Segment::DELIMITER_OBJECT;
+			if ($char . ($path[$i + 1] ?? '') === Segment::DELIMITER_OBJECT) {
+				$segments[] = new Segment($key, Segment::DELIMITER_OBJECT);
+				$key = '';
+				++$i;
+				continue;
 			}
-
-			$key = substr($remaining, 0, $pos);
-			$segments[] = new Segment($key, $type);
-			$remaining = substr($remaining, strlen($key . $type));
+			$key .= $char;
 		}
 
+		$segments[] = new Segment($key);
 		return $segments;
 	}
 }
