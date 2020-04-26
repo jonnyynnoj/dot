@@ -38,6 +38,22 @@ class Dot
 		return !$parser->branched ? $values[0] : $values;
 	}
 
+	public function has(string $path): bool
+	{
+		return $this->get($path) !== null;
+	}
+
+	public function push(string $path, $value)
+	{
+		$parser = new Parser();
+		$nodeList = $parser->parse($this->data, $path);
+
+		foreach ($nodeList->getLeafNodes() as $node) {
+			$array = &$node->accessValue();
+			$array[] = $value;
+		}
+	}
+
 	public function set($paths, $value = null)
 	{
 		if (is_array($paths)) {
@@ -74,10 +90,5 @@ class Dot
 			$currentValue = &$node->accessValue(true);
 			$currentValue = $value;
 		}
-	}
-
-	public function has(string $path): bool
-	{
-		return $this->get($path) !== null;
 	}
 }

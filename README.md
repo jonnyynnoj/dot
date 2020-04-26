@@ -47,6 +47,7 @@ $data = [
 
 - [get](#dotgetstring-path-mixed)
 - [has](#dothasstring-path-bool)
+- [push](#dotpushstring-path-mixed-value-void)
 - [set](#dotsetarraystring-paths-mixed-value-void)
 
 All methods are also available as standalone functions ie `\Noj\Dot\get($data, 'groups')`
@@ -91,6 +92,17 @@ Returns true if path exists, false otherwise:
 
 ```php
 $dot->has('groups.0.items.1.name'); // true
+```
+
+#### `Dot::push(string $path, mixed $value): void`
+
+Push a value onto an existing array:
+
+```php
+$dot->push('groups.0.items', ['name' => 'another item']);
+
+// supports wildcards
+$dot->push('groups.*.items', ['name' => 'another item']);
 ```
 
 #### `Dot::set(array|string $paths, mixed $value): void`
