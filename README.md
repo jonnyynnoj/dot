@@ -43,7 +43,15 @@ $data = [
 ];
 ```
 
-### `Dot::get(string $path): mixed`
+### Methods
+
+- [get](#dotgetstring-path-mixed)
+- [has](#dothasstring-path-bool)
+- [set](#dotsetarraystring-paths-mixed-value-void)
+
+All methods are also available as standalone functions ie `\Noj\Dot\get($data, 'groups')`
+
+#### `Dot::get(string $path): mixed`
 
 Access nested array keys and object properties using dot syntax:
 
@@ -77,7 +85,7 @@ $data = [
 (new Dot($data))->get('foo.@getBar.bar'); // 'value'
 ```
 
-### `Dot::has(string $path): bool`
+#### `Dot::has(string $path): bool`
 
 Returns true if path exists, false otherwise:
 
@@ -85,7 +93,7 @@ Returns true if path exists, false otherwise:
 $dot->has('groups.0.items.1.name'); // true
 ```
 
-### `Dot::set(array|string $paths, mixed $value): void`
+#### `Dot::set(array|string $paths, mixed $value): void`
 
 You can set nested values using the same syntax:
 
