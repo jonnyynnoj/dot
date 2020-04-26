@@ -7,17 +7,17 @@ use Noj\Dot\Exception\InvalidMethodException;
 class Node
 {
 	public $item;
-	public $key;
+	public $segment;
 
-	public function __construct(&$item, $key)
+	public function __construct(&$item, Segment $segment)
 	{
 		$this->item = &$item;
-		$this->key = $key;
+		$this->segment = $segment;
 	}
 
-	public function withKey(string $key): Node
+	public function withSegment(Segment $segment): Node
 	{
-		return new self($this->item, $key);
+		return new self($this->item, $segment);
 	}
 
 	/**
@@ -32,23 +32,23 @@ class Node
 		}
 
 		if (is_object($this->item)) {
-			if (!property_exists($this->item, $this->key) && !$initialiseIfNotSet) {
+			if (!property_exists($this->item, $this->segment->key) && !$initialiseIfNotSet) {
 				$result = null;
 				return $result;
 			}
-			return $this->item->{$this->key};
+			return $this->item->{$this->segment->key};
 		}
 
 		if ($this->targetsAllArrayKeys()) {
 			return $this->item;
 		}
 
-		if (!array_key_exists($this->key, $this->item) && !$initialiseIfNotSet) {
+		if (!array_key_exists($this->segment->key, $this->item) && !$initialiseIfNotSet) {
 			$result = null;
 			return $result;
 		}
 
-		return $this->item[$this->key];
+		return $this->item[$this->segment->key];
 	}
 
 	public function getMethod()
@@ -68,17 +68,17 @@ class Node
 
 	public function isMethodCall(): bool
 	{
-		return strpos($this->key, '@') === 0;
+		return strpos($this->segment->key, '@') === 0;
 	}
 
 	public function getMethodName()
 	{
-		return substr($this->key, 1);
+		return substr($this->segment->key, 1);
 	}
 
 	public function targetsAllArrayKeys(): bool
 	{
-		return $this->isArrayLike() && $this->key === '*';
+		return $this->isArrayLike() && $this->segment->key === '*';
 	}
 
 	public function isArrayLike(): bool

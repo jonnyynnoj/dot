@@ -24,16 +24,6 @@ class SetTest extends TestCase
 	}
 
 	/** @test */
-	public function it_can_create_array_keys_if_missing()
-	{
-		$data = ['key' => null];
-
-		$dot = Dot::from($data);
-		$dot->set('key.foo.bar.baz', 2);
-		self::assertEquals(2, $data['key']['foo']['bar']['baz']);
-	}
-
-	/** @test */
 	public function it_can_set_path_through_objects()
 	{
 		$data = [
@@ -50,13 +40,13 @@ class SetTest extends TestCase
 	}
 
 	/** @test */
-	public function it_can_create_object_properties_if_missing()
+	public function it_can_create_keys_if_missing()
 	{
-		$data = (object)['key' => null];
+		$data = [];
 
 		$dot = Dot::from($data);
-		$dot->set('key.foo.bar.baz', 2);
-		self::assertEquals(2, $data->key->foo->bar->baz);
+		$dot->set('key.foo->bar.baz', 2);
+		self::assertEquals(2, $data['key']['foo']->bar['baz']);
 	}
 
 	/** @test */

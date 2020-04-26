@@ -5,6 +5,7 @@ namespace Noj\Dot;
 use Noj\Dot\Exception\InvalidMethodException;
 use Noj\Dot\Parser\Node;
 use Noj\Dot\Parser\Parser;
+use Noj\Dot\Parser\Segment;
 
 class Dot
 {
@@ -49,10 +50,12 @@ class Dot
 		$nodeList = (new Parser(true))->parse($this->data, $paths);
 
 		foreach ($nodeList->getLeafNodes() as $node) {
-			if (is_array($value) && substr($node->key, -1) === '*') {
+			if (is_array($value) && substr($node->segment->key, -1) === '*') {
 				foreach ($value as $param) {
-					$name = substr($node->key, 0, -1);
-					$node->withKey($name)->getMethod()->invoke($node->item, $param);
+					$name = substr($node->segment->key, 0, -1);
+					$node->withSegment(new Segment($name))
+						->getMethod()
+						->invoke($node->item, $param);
 				}
 				continue;
 			}

@@ -16,11 +16,16 @@ class Parser
 
 	public function parse(&$data, string $path): NodeList
 	{
-		$segments = explode('.', $path);
-		$this->branched = in_array('*', $segments);
-		$key = array_shift($segments);
+		$segments = $this->getSegments($path);
 
-		return $this->traverse(new Node($data, $key), $segments);
+		$keys = array_map(function (Segment $segment) {
+			return $segment->key;
+		}, $segments);
+
+		$this->branched = in_array('*', $keys);
+
+		$segment = array_shift($segments);
+		return $this->traverse(new Node($data, $segment), $segments);
 	}
 
 	private function traverse(Node $node, array $segments): NodeList
@@ -31,11 +36,11 @@ class Parser
 			return $nodeList->add($node);
 		}
 
-		$nextKey = array_shift($segments);
+		$nextSegment = array_shift($segments);
 
 		if ($node->targetsAllArrayKeys()) {
 			foreach ($node->item as &$nextValue) {
-				$nodeList->add($this->traverse(new Node($nextValue, $nextKey), $segments));
+				$nodeList->add($this->traverse(new Node($nextValue, $nextSegment), $segments));
 			}
 			return $nodeList;
 		}
@@ -51,9 +56,48 @@ class Parser
 				return $nodeList->add($node);
 			}
 
-			$nextValue = $node->isArrayLike() ? [] : (object)[];
+			$nextValue = $node->segment->delimiter === Segment::DELIMITER_OBJECT ? new \stdClass : [];
 		}
 
-		return $this->traverse(new Node($nextValue, $nextKey), $segments);
+		return $this->traverse(new Node($nextValue, $nextSegment), $segments);
+	}
+
+	/**
+	 * @return Segment[]
+	 */
+	private function getSegments(string $path): array
+	{
+		if (strpos($path, Segment::DELIMITER_OBJECT) === false) {
+			return array_map(function (string $part) {
+				return new Segment($part);
+			}, explode('.', $path));
+		}
+
+		$remaining = $path;
+		$segments = [];
+
+		while ($remaining !== '') {
+			$nextDot = strpos($remaining, Segment::DELIMITER_ARRAY);
+			$nextArrow = strpos($remaining, Segment::DELIMITER_OBJECT);
+
+			if ($nextDot === false && $nextArrow === false) {
+				$segments[] = new Segment($remaining);
+				break;
+			}
+
+			if ($nextArrow === false || ($nextDot !== false && $nextDot < $nextArrow)) {
+				$pos = $nextDot;
+				$type = Segment::DELIMITER_ARRAY;
+			} else {
+				$pos = $nextArrow;
+				$type = Segment::DELIMITER_OBJECT;
+			}
+
+			$key = substr($remaining, 0, $pos);
+			$segments[] = new Segment($key, $type);
+			$remaining = substr($remaining, strlen($key . $type));
+		}
+
+		return $segments;
 	}
 }
