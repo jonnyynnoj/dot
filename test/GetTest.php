@@ -112,7 +112,6 @@ class GetTest extends TestCase
 						'items' => [
 							['name' => 'item1'],
 							['name' => 'item3'],
-							['name' => 'item6']
 						]
 					]
 				]
@@ -121,9 +120,7 @@ class GetTest extends TestCase
 				'name' => 'group2',
 				'users' => [
 					'user2' => [
-						'items' => [
-							['name' => 'item2'],
-						]
+						'items' => []
 					]
 				]
 			],
@@ -132,8 +129,7 @@ class GetTest extends TestCase
 				'users' => [
 					'user3' => [
 						'items' => [
-							['name' => 'item4'],
-							['name' => 'item5'],
+							['name' => 'item2'],
 						]
 					]
 				]
@@ -142,7 +138,7 @@ class GetTest extends TestCase
 
 		$dot = Dot::from($data);
 
-		$expected = ['item1', 'item3', 'item6', 'item2', 'item4', 'item5',];
+		$expected = ['item1', 'item3', 'item2'];
 		self::assertEquals($expected, $dot->get('*.users.*.items.*.name'));
 	}
 }
