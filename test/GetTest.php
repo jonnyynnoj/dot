@@ -33,7 +33,7 @@ class GetTest extends TestCase
 	}
 
 	/** @test */
-	public function it_returns_null_if_path_doesnt_exist()
+	public function it_returns_null_if_array_path_doesnt_exist()
 	{
 		$data = [
 			'key' => []
@@ -44,7 +44,24 @@ class GetTest extends TestCase
 		self::assertNull($dot->get('key.foo'));
 		self::assertNull($dot->get('key.foo.bar'));
 		self::assertNull($dot->get('key.foo.bar.baz'));
-		self::assertFalse(isset($data['key']['foo']));
+		self::assertArrayNotHasKey('foo', $data);
+		self::assertArrayNotHasKey('foo', $data['key']);
+	}
+
+	/** @test */
+	public function it_returns_null_if_object_path_doesnt_exist()
+	{
+		$data = (object)[
+			'key' => (object)[]
+		];
+
+		$dot = Dot::from($data);
+		self::assertNull($dot->get('foo'));
+		self::assertNull($dot->get('key.foo'));
+		self::assertNull($dot->get('key.foo.bar'));
+		self::assertNull($dot->get('key.foo.bar.baz'));
+		self::assertObjectNotHasAttribute('foo', $data);
+		self::assertObjectNotHasAttribute('foo', $data->key);
 	}
 
 	/** @test */

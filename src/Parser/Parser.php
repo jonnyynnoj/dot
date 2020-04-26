@@ -41,7 +41,7 @@ class Parser
 		}
 
 		try {
-			$nextValue = &$node->accessValue();
+			$nextValue = &$node->accessValue($this->createMissingPaths);
 		} catch (InvalidMethodException $e) {
 			$nextValue = null;
 		}

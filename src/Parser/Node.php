@@ -24,26 +24,31 @@ class Node
 	 * @throws InvalidMethodException
 	 * @return mixed|null
 	 */
-	public function &accessValue()
+	public function &accessValue($initialiseIfNotSet = false)
 	{
 		if ($method = $this->getMethod()) {
 			$result = $method ? $method->invoke($this->item) : null;
 			return $result;
 		}
 
+		if (is_object($this->item)) {
+			if (!property_exists($this->item, $this->key) && !$initialiseIfNotSet) {
+				$result = null;
+				return $result;
+			}
+			return $this->item->{$this->key};
+		}
+
 		if ($this->targetsAllArrayKeys()) {
 			return $this->item;
 		}
 
-		if ($this->isArrayLike()) {
-			return $this->item[$this->key];
+		if (!array_key_exists($this->key, $this->item) && !$initialiseIfNotSet) {
+			$result = null;
+			return $result;
 		}
 
-		if (is_object($this->item)) {
-			return $this->item->{$this->key};
-		}
-
-		return null;
+		return $this->item[$this->key];
 	}
 
 	public function getMethod()
@@ -78,6 +83,6 @@ class Node
 
 	public function isArrayLike(): bool
 	{
-		return is_array($this->item) || $this->item instanceof \Traversable;
+		return is_array($this->item) || ($this->item instanceof \ArrayAccess && $this->item instanceof \Traversable);
 	}
 }

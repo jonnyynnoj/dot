@@ -69,7 +69,7 @@ class Dot
 				continue;
 			}
 
-			$currentValue = &$node->accessValue();
+			$currentValue = &$node->accessValue(true);
 			$currentValue = $value;
 		}
 	}
