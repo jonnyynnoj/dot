@@ -10,53 +10,57 @@ composer require noj/dot
 
 ## Usage
 
-### get(string $path)
+First construct a new Dot instance:
+
+```php
+$dot = new Dot($data);
+$dot = Dot::from($data); // alternative
+```
+
+All the examples are using the following data structure unless otherwise specified:
+
+```php
+$data = [
+    'groups' => [
+        (object)[
+            'name' => 'group1',
+            'items' => [
+                (object)['name' => 'item1'],
+                (object)['name' => 'item3'],
+            ]
+        ],
+        (object)[
+            'name' => 'group2',
+            'items' => []
+        ],
+        (object)[
+            'name' => 'group3',
+            'items' => [
+                (object)['name' => 'item2'],
+            ]
+        ],
+    ]
+];
+```
+
+### `Dot::get(string $path)`
 
 Access nested array keys and object properties using dot syntax:
 
 ```php
-$data = [
-    'foo' => (object)[
-        'bar' => [
-            'baz' => 'value'
-        ]
-    ]
-];
-
-(new Dot($data))->get('foo.bar.baz'); // 'value'
-// or alternatively
-Dot::from($data)->get('foo.bar.baz'); // 'value'
-```
-
-You can access numeric array indexes in the same way:
-
-```php
-$data = ['values' => ['foo', 'bar']];
-(new Dot($data))->get('values.1'); // bar
+$dot->get('groups.0.items.1.name'); // 'item3'
 ```
 
 Dot safely returns null if the key or property doesn't exist:
 
 ```php
-$data = ['foo' => ['bar' => 1]];
-(new Dot($data))->get('foo.baz'); // null
+$dot->get('groups.3.items.1.name'); // null
 ```
 
 You can pluck values from multidimensional arrays using the `*` syntax:
 
 ```php
-$data = [
-    'nested' => [
-        'data' => [
-            ['foo' => ['bar' => 'value1']],
-            ['foo' => ['bar' => 'value2']],
-            ['foo' => ['bar' => 'value2']],
-        ]
-    ]
-];
-
-$dot = new Dot($data);
-$dot->get('nested.data.*.foo.bar') // ['value1', 'value2', 'value3']
+$dot->get('groups.*.items.*.name'); // ['item1', 'item3', 'item2']
 ```
 
 You can call functions using the `@` prefix:
@@ -73,50 +77,27 @@ $data = [
 (new Dot($data))->get('foo.@getBar.bar'); // 'value'
 ```
 
-### set(array|string $paths, mixed $value)
+### `Dot::set(array|string $paths, mixed $value)`
 
 You can set nested values using the same syntax:
 
 ```php
-$data = [
-    'foo' => (object)[
-        'bar' => [
-            ['baz' => 'value'],
-            ['baz' => 'value'],
-        ]
-    ]
-];
-
-$dot = new Dot($data);
-$dot->set('foo.bar.0.baz', 'something');
-echo $dot->get('foo.bar.0.baz'); // 'something'
-echo $data['foo']['bar']['baz']; // 'something'
+$dot->set('groups.2.items.0.name', 'a different name');
+echo $data['groups'][2]['items'][0]['name']; // 'a different name'
 ```
 
 Set nested keys of a multidimensional array using the `*` syntax:
 
 ```php
-$data = [
-    'nested' => [
-        'data' => [
-            ['foo' => ['bar' => 'value1']],
-            ['foo' => ['bar' => 'value2']],
-            ['foo' => ['bar' => 'value2']],
-        ]
-    ]
-];
-
-$dot = new Dot($data);
-$dot->set('nested.data.*.foo.bar', 'baz')
-$dot->get('nested.data.*.foo.bar') // ['baz', 'baz', 'baz']
+$dot->set('groups.*.items.*.name', 'set all to same name');
 ```
 
 You can set multiple paths at once by passing an array:
 
 ```php
 $dot->set([
-    'path.to.first.value' => 'something',
-    'path.to.second.value' => 'something else',
+    'groups.0.items.1.name' => 'something',
+    'groups.2.items.0.name' => 'something else',
 ]):
 ```
 
