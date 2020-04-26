@@ -108,6 +108,17 @@ Set nested keys of a multidimensional array using the `*` syntax:
 $dot->set('groups.*.items.*.name', 'set all to same name');
 ```
 
+Set will create keys if they don't exist:
+
+```php
+$dot->set('groups.0.items.2.name', 'a new item');
+```
+
+By default set will initialise values empty arrays. To indicate that something should be an object use the -> delimiter:
+```php
+$dot->set('groups.0.items.2->name', 'a new item');
+```
+
 You can set multiple paths at once by passing an array:
 
 ```php
