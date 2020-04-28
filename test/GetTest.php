@@ -3,6 +3,7 @@
 namespace Noj\Dot\Test;
 
 use Noj\Dot\Dot;
+use Noj\Dot\Test\Stubs\Collection;
 use PHPUnit\Framework\TestCase;
 
 class GetTest extends TestCase
@@ -30,6 +31,16 @@ class GetTest extends TestCase
 
 		$value = Dot::from($data)->get('nested.0.property');
 		self::assertEquals('value', $value);
+	}
+
+	/** @test */
+	public function it_can_get_path_through_array_like_objects()
+	{
+		$items = new Collection(['name' => 'item1']);
+		$collection = new Collection(['items' => $items]);
+
+		$value = Dot::from($collection)->get('items.name');
+		self::assertEquals('item1', $value);
 	}
 
 	/** @test */

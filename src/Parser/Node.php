@@ -31,24 +31,25 @@ class Node
 			return $result;
 		}
 
-		if (is_object($this->item)) {
-			if (!property_exists($this->item, $this->segment->key) && !$initialiseIfNotSet) {
+		if ($this->isArrayLike()) {
+			if ($this->targetsAllArrayKeys()) {
+				return $this->item;
+			}
+
+			if (!isset($this->item[$this->segment->key]) && !$initialiseIfNotSet) {
 				$result = null;
 				return $result;
 			}
-			return $this->item->{$this->segment->key};
+
+			return $this->item[$this->segment->key];
 		}
 
-		if ($this->targetsAllArrayKeys()) {
-			return $this->item;
-		}
-
-		if (!array_key_exists($this->segment->key, $this->item) && !$initialiseIfNotSet) {
+		if (!property_exists($this->item, $this->segment->key) && !$initialiseIfNotSet) {
 			$result = null;
 			return $result;
 		}
 
-		return $this->item[$this->segment->key];
+		return $this->item->{$this->segment->key};
 	}
 
 	public function getMethod()
@@ -78,11 +79,16 @@ class Node
 
 	public function targetsAllArrayKeys(): bool
 	{
-		return $this->isArrayLike() && $this->segment->key === '*';
+		return $this->isIterable() && $this->segment->key === '*';
 	}
 
 	public function isArrayLike(): bool
 	{
-		return is_array($this->item) || ($this->item instanceof \ArrayAccess && $this->item instanceof \Traversable);
+		return is_array($this->item) || $this->item instanceof \ArrayAccess;
+	}
+
+	public function isIterable(): bool
+	{
+		return is_array($this->item) || $this->item instanceof \Traversable;
 	}
 }
