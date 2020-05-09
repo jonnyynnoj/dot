@@ -1,5 +1,11 @@
 # Dot
 
+[![Travis (.com)](https://img.shields.io/travis/com/jonnyynnoj/dot?style=flat-square)](https://travis-ci.com/github/jonnyynnoj/dot)
+[![Latest Stable Version](https://poser.pugx.org/noj/dot/v/stable?format=flat-square)](https://packagist.org/packages/noj/dot)
+![PHP Version Support](https://img.shields.io/packagist/php-v/noj/dot?style=flat-square)
+[![License](https://poser.pugx.org/noj/dot/license?format=flat-square)](https://packagist.org/packages/noj/dot)
+[![Total Downloads](https://poser.pugx.org/noj/dot/downloads?format=flat-square)](https://packagist.org/packages/noj/dot)
+
 Dot allows you to get & set array keys or object properties using dot notation.
 
 ## Installing
