@@ -67,32 +67,15 @@ class Parser
 	 */
 	private function getSegments(string $path): array
 	{
-		if (strpos($path, Segment::DELIMITER_OBJECT) === false) {
-			return array_map(function (string $part) {
-				return new Segment($part);
-			}, explode('.', $path));
-		}
-
+		$parts = preg_split('/(\.|->)/', $path, -1, PREG_SPLIT_DELIM_CAPTURE);
+		$iterator = new \ArrayIterator($parts);
 		$segments = [];
-		$key = '';
 
-		for ($i = 0, $length = strlen($path); $i < $length; ++$i) {
-			$char = $path[$i];
-			if ($char === Segment::DELIMITER_ARRAY) {
-				$segments[] = new Segment($key);
-				$key = '';
-				continue;
-			}
-			if ($char . ($path[$i + 1] ?? '') === Segment::DELIMITER_OBJECT) {
-				$segments[] = new Segment($key, Segment::DELIMITER_OBJECT);
-				$key = '';
-				++$i;
-				continue;
-			}
-			$key .= $char;
+		foreach ($iterator as $index => $part) {
+			$segments[]  = new Segment($part, $iterator[$index + 1] ?? Segment::DELIMITER_ARRAY);
+			$iterator->next();
 		}
 
-		$segments[] = new Segment($key);
 		return $segments;
 	}
 }
