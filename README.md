@@ -142,6 +142,12 @@ $data = [
 (new Dot($data))->get('foo.@getBar.bar'); // 'value'
 ```
 
+If no argument is passed it will return the underlying data:
+
+```php
+$dot->get() === $data; // true
+```
+
 #### `Dot::has(string $path): bool`
 
 Returns true if path exists, false otherwise:
