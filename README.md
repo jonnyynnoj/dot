@@ -31,8 +31,14 @@ $data = [
         (object)[
             'name' => 'group1',
             'items' => [
-                (object)['name' => 'item1'],
-                (object)['name' => 'item3'],
+                (object)[
+                    'name' => 'item1',
+                    'rare' => false,
+                ],
+                (object)[
+                    'name' => 'item3',
+                    'rare' => true,
+                ],
             ]
         ],
         (object)[
@@ -42,7 +48,10 @@ $data = [
         (object)[
             'name' => 'group3',
             'items' => [
-                (object)['name' => 'item2'],
+                (object)[
+                    'name' => 'item2',
+                    'rare' => true,
+                ],
             ]
         ],
     ]
@@ -51,12 +60,38 @@ $data = [
 
 ### Methods
 
+- [find](#dotfindstring-path-mixed-equals-dot)
 - [get](#dotgetstring-path-mixed)
 - [has](#dothasstring-path-bool)
 - [push](#dotpushstring-path-mixed-value-void)
 - [set](#dotsetarraystring-paths-mixed-value-void)
 
 All methods are also available as standalone functions ie `\Noj\Dot\get($data, 'groups')`
+
+#### `Dot::find(string $path, mixed $equals): Dot`
+
+Find items matching the given condition.
+
+```php
+// find where property === value
+$dot->find('groups.*.items.*.rare', true)->get();
+/*
+[
+    ['name' => 'item2', 'rare' => true],
+    ['name' => 'item3', 'rare' => true]
+]
+*/
+
+// pass a callback for custom comparisons 
+$dot->find('groups.*.items.*.name', function (string $name) {
+    return $name === 'item2' || $name === 'item3';
+})->get(); // returns same as above
+
+// leave off the property to receive the whole item
+$dot->find('groups.*.items.*', function (\stdClass $item) {
+    return $item->name === 'item3' && $item->rare;
+})->get();
+```
 
 #### `Dot::get(string $path): mixed`
 

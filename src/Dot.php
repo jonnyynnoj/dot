@@ -2,6 +2,7 @@
 
 namespace Noj\Dot;
 
+use Closure;
 use Noj\Dot\Exception\InvalidMethodException;
 use Noj\Dot\Parser\Node;
 use Noj\Dot\Parser\Parser;
@@ -21,8 +22,43 @@ class Dot
 		return new self($data);
 	}
 
-	public function get(string $path)
+	public function find(string $path, $equals): self
 	{
+		$parser = new Parser();
+		$nodeList = $parser->parse($this->data, $path);
+		$found = [];
+
+		if (!$equals instanceof Closure) {
+			$equals = $this->equality($equals);
+		}
+
+		foreach ($nodeList->getLeafNodes() as $node) {
+			if ($node->targetsAllArrayKeys()) {
+				foreach ($node->item as &$value) {
+					if ($equals($value)) {
+						$found[] = &$value;
+					}
+				}
+				continue;
+			}
+
+			try {
+				if ($equals($node->accessValue())) {
+					$found[] = &$node->item;
+				}
+			} catch (InvalidMethodException $e) {
+			}
+		}
+
+		return new self($found);
+	}
+
+	public function get(string $path = '')
+	{
+		if ($path === '') {
+			return $this->data;
+		}
+
 		$parser = new Parser();
 		$nodeList = $parser->parse($this->data, $path);
 
@@ -90,5 +126,12 @@ class Dot
 			$currentValue = &$node->accessValue(true);
 			$currentValue = $value;
 		}
+	}
+
+	private function equality($value): callable
+	{
+		return function ($item) use ($value) {
+			return $item === $value;
+		};
 	}
 }

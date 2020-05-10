@@ -2,6 +2,11 @@
 
 namespace Noj\Dot;
 
+function find(&$data, string $path, $equals): Dot
+{
+	return Dot::from($data)->find($path, $equals);
+}
+
 function get($data, string $path)
 {
 	return Dot::from($data)->get($path);
