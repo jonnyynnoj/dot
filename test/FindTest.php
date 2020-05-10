@@ -7,36 +7,7 @@ use function Noj\Dot\find;
 
 class FindTest extends TestCase
 {
-	private $data = [];
-
-	protected function setUp()
-	{
-		$this->data = [
-			'groups' => [[
-				'users' => [
-					(object)[
-						'id' => 1,
-						'banned' => false
-					],
-					(object)[
-						'id' => 3,
-						'banned' => true
-					],
-					(object)[
-						'id' => 4,
-						'banned' => true
-					],
-				]
-			], [
-				'users' => [
-					(object)[
-						'id' => 2,
-						'banned' => true
-					],
-				]
-			]]
-		];
-	}
+	use Dataset;
 
 	/** @test */
 	public function it_can_find_property_by_value()

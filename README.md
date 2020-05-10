@@ -60,6 +60,7 @@ $data = [
 
 ### Methods
 
+- [count](#dotcountstring-path-int)
 - [find](#dotfindstring-path-mixed-equals-dot)
 - [get](#dotgetstring-path-mixed)
 - [has](#dothasstring-path-bool)
@@ -67,6 +68,14 @@ $data = [
 - [set](#dotsetarraystring-paths-mixed-value-void)
 
 All methods are also available as standalone functions ie `\Noj\Dot\get($data, 'groups')`
+
+#### `Dot::count(string $path): int`
+
+Count the number of items at a given path.
+```php
+$dot->count('groups.0.items'); // 2
+$dot->count('groups.*.items'); // 3
+```
 
 #### `Dot::find(string $path, mixed $equals): Dot`
 

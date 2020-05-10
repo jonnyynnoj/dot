@@ -2,6 +2,11 @@
 
 namespace Noj\Dot;
 
+function count($data, string $path): int
+{
+	return Dot::from($data)->count($path);
+}
+
 function find(&$data, string $path, $equals): Dot
 {
 	return Dot::from($data)->find($path, $equals);

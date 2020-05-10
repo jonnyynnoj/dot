@@ -22,6 +22,12 @@ class Dot
 		return new self($data);
 	}
 
+	public function count(string $path = null): int
+	{
+		$values = $this->get($path);
+		return is_array($values) ? \count(array_filter($values)) : 0;
+	}
+
 	public function find(string $path, $equals): self
 	{
 		$parser = new Parser();
@@ -53,9 +59,9 @@ class Dot
 		return new self($found);
 	}
 
-	public function get(string $path = '')
+	public function get(string $path = null)
 	{
-		if ($path === '') {
+		if ($path === null) {
 			return $this->data;
 		}
 
