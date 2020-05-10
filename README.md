@@ -31,11 +31,11 @@ $data = [
         (object)[
             'name' => 'group1',
             'items' => [
-                (object)[
+                [
                     'name' => 'item1',
                     'rare' => false,
                 ],
-                (object)[
+                [
                     'name' => 'item3',
                     'rare' => true,
                 ],
@@ -48,7 +48,7 @@ $data = [
         (object)[
             'name' => 'group3',
             'items' => [
-                (object)[
+                [
                     'name' => 'item2',
                     'rare' => true,
                 ],
@@ -88,8 +88,8 @@ $dot->find('groups.*.items.*.name', function (string $name) {
 })->get(); // returns same as above
 
 // leave off the property to receive the whole item
-$dot->find('groups.*.items.*', function (\stdClass $item) {
-    return $item->name === 'item3' && $item->rare;
+$dot->find('groups.*.items.*', function (array $item) {
+    return $item['name'] === 'item3' && $item['rare'];
 })->get();
 ```
 
@@ -111,6 +111,12 @@ You can use a wildcard `*` to pluck values from multiple paths:
 
 ```php
 $dot->get('groups.*.items.*.name'); // ['item1', 'item3', 'item2']
+
+$dot->get('groups.*.items'); /* [
+    ['name' => 'item1', 'rare' => false],
+    ['name' => 'item3', 'rare' => true],
+    ['name' => 'item2', 'rare' => true],
+] */
 ```
 
 You can call functions using the `@` prefix:
@@ -152,7 +158,7 @@ You can set nested values using the same syntax:
 
 ```php
 $dot->set('groups.2.items.0.name', 'a different name');
-echo $data['groups'][2]['items'][0]['name']; // 'a different name'
+echo $data['groups'][2]->items[0]['name']; // 'a different name'
 ```
 
 Set nested keys from multiple paths using a wildcard `*`:
@@ -167,9 +173,9 @@ Keys will be created if they don't already exist:
 $dot->set('groups.0.items.2.name', 'a new item');
 ```
 
-By default set will initialise missing values as empty arrays. To indicate that something should be an object use the `->` delimiter:
+By default, set will initialise missing values as empty arrays. To indicate that something should be an object use the `->` delimiter:
 ```php
-$dot->set('groups.0.items.2->name', 'a new item');
+$dot->set('groups.3->items.2.name', 'a new item');
 ```
 
 You can set multiple values at once by passing an array:

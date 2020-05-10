@@ -71,7 +71,7 @@ class Dot
 			}
 		}, $nodes);
 
-		return !$parser->branched ? $values[0] : $values;
+		return !$parser->branched ? $values[0] : $this->flatten($values);
 	}
 
 	public function has(string $path): bool
@@ -133,5 +133,15 @@ class Dot
 		return function ($item) use ($value) {
 			return $item === $value;
 		};
+	}
+
+	private function flatten(array $values): array
+	{
+		return array_merge([], ...array_map([$this, 'wrap'], $values));
+	}
+
+	private function wrap($value): array
+	{
+		return is_array($value) ? $value : [$value];
 	}
 }

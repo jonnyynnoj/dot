@@ -132,7 +132,7 @@ class GetTest extends TestCase
 			[
 				'name' => 'group1',
 				'users' => [
-					'user1' => [
+					[
 						'items' => [
 							['name' => 'item1'],
 							['name' => 'item3'],
@@ -143,7 +143,7 @@ class GetTest extends TestCase
 			[
 				'name' => 'group2',
 				'users' => [
-					'user2' => [
+					[
 						'items' => []
 					]
 				]
@@ -151,7 +151,7 @@ class GetTest extends TestCase
 			[
 				'name' => 'group3',
 				'users' => [
-					'user3' => [
+					[
 						'items' => [
 							['name' => 'item2'],
 						]
@@ -162,5 +162,12 @@ class GetTest extends TestCase
 
 		$expected = ['item1', 'item3', 'item2'];
 		self::assertEquals($expected, get($data, '*.users.*.items.*.name'));
+
+		$expected = [
+			['name' => 'item1'],
+			['name' => 'item3'],
+			['name' => 'item2'],
+		];
+		self::assertEquals($expected, get($data, '*.users.*.items'));
 	}
 }
