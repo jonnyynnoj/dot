@@ -2,9 +2,9 @@
 
 namespace Noj\Dot\Test;
 
-use Noj\Dot\Dot;
 use Noj\Dot\Test\Stubs\Collection;
 use PHPUnit\Framework\TestCase;
+use function Noj\Dot\get;
 
 class GetTest extends TestCase
 {
@@ -12,11 +12,11 @@ class GetTest extends TestCase
 	public function it_can_get_a_top_level_property()
 	{
 		$data = ['property' => ['foo' => 'bar']];
-		$value = Dot::from($data)->get('property');
+		$value = get($data, 'property');
 		self::assertEquals(['foo' => 'bar'], $value);
 
 		$data = ['foo', 'bar'];
-		$value = Dot::from($data)->get('0');
+		$value = get($data, '0');
 		self::assertEquals('foo', $value);
 	}
 
@@ -29,7 +29,7 @@ class GetTest extends TestCase
 			]
 		];
 
-		$value = Dot::from($data)->get('nested.0.property');
+		$value = get($data, 'nested.0.property');
 		self::assertEquals('value', $value);
 	}
 
@@ -39,7 +39,7 @@ class GetTest extends TestCase
 		$items = new Collection(['name' => 'item1']);
 		$collection = new Collection(['items' => $items]);
 
-		$value = Dot::from($collection)->get('items.name');
+		$value = get($collection, 'items.name');
 		self::assertEquals('item1', $value);
 	}
 
@@ -50,11 +50,10 @@ class GetTest extends TestCase
 			'key' => []
 		];
 
-		$dot = Dot::from($data);
-		self::assertNull($dot->get('foo'));
-		self::assertNull($dot->get('key.foo'));
-		self::assertNull($dot->get('key.foo.bar'));
-		self::assertNull($dot->get('key.foo.bar.baz'));
+		self::assertNull(get($data, 'foo'));
+		self::assertNull(get($data, 'key.foo'));
+		self::assertNull(get($data, 'key.foo.bar'));
+		self::assertNull(get($data, 'key.foo.bar.baz'));
 		self::assertArrayNotHasKey('foo', $data);
 		self::assertArrayNotHasKey('foo', $data['key']);
 	}
@@ -66,11 +65,10 @@ class GetTest extends TestCase
 			'key' => (object)[]
 		];
 
-		$dot = Dot::from($data);
-		self::assertNull($dot->get('foo'));
-		self::assertNull($dot->get('key.foo'));
-		self::assertNull($dot->get('key.foo.bar'));
-		self::assertNull($dot->get('key.foo.bar.baz'));
+		self::assertNull(get($data, 'foo'));
+		self::assertNull(get($data, 'key.foo'));
+		self::assertNull(get($data, 'key.foo.bar'));
+		self::assertNull(get($data, 'key.foo.bar.baz'));
 		self::assertObjectNotHasAttribute('foo', $data);
 		self::assertObjectNotHasAttribute('foo', $data->key);
 	}
@@ -86,7 +84,7 @@ class GetTest extends TestCase
 			]
 		];
 
-		$value = Dot::from($data)->get('nested.data.property');
+		$value = get($data, 'nested.data.property');
 		self::assertEquals('value', $value);
 	}
 
@@ -101,7 +99,7 @@ class GetTest extends TestCase
 			}
 		];
 
-		$value = Dot::from($data)->get('nested.@getSomething.property');
+		$value = get($data, 'nested.@getSomething.property');
 		self::assertEquals('value', $value);
 
 		$data = [
@@ -112,7 +110,7 @@ class GetTest extends TestCase
 			}
 		];
 
-		$value = Dot::from($data)->get('nested.@getSomething');
+		$value = get($data, 'nested.@getSomething');
 		self::assertEquals('value', $value);
 	}
 
@@ -121,12 +119,10 @@ class GetTest extends TestCase
 	{
 		$data = ['key' => []];
 
-		$dot = Dot::from($data);
-
-		self::assertNull($dot->get('@getSomething'));
-		self::assertNull($dot->get('invalid.@getSomething'));
-		self::assertNull($dot->get('key.@getSomething'));
-		self::assertNull($dot->get('key.@getSomething.foo'));
+		self::assertNull(get($data, '@getSomething'));
+		self::assertNull(get($data, 'invalid.@getSomething'));
+		self::assertNull(get($data, 'key.@getSomething'));
+		self::assertNull(get($data, 'key.@getSomething.foo'));
 	}
 
 	/** @test */
@@ -164,9 +160,7 @@ class GetTest extends TestCase
 			],
 		];
 
-		$dot = Dot::from($data);
-
 		$expected = ['item1', 'item3', 'item2'];
-		self::assertEquals($expected, $dot->get('*.users.*.items.*.name'));
+		self::assertEquals($expected, get($data, '*.users.*.items.*.name'));
 	}
 }

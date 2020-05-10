@@ -2,8 +2,8 @@
 
 namespace Noj\Dot\Test;
 
-use Noj\Dot\Dot;
 use PHPUnit\Framework\TestCase;
+use function Noj\Dot\set;
 
 class SetTest extends TestCase
 {
@@ -18,8 +18,7 @@ class SetTest extends TestCase
 			]
 		];
 
-		$dot = Dot::from($data);
-		$dot->set('nested.data.property', 'foo');
+		set($data, 'nested.data.property', 'foo');
 		self::assertEquals('foo', $data['nested']['data']['property']);
 	}
 
@@ -34,8 +33,7 @@ class SetTest extends TestCase
 			]
 		];
 
-		$dot = Dot::from($data);
-		$dot->set('nested.data.property', 'foo');
+		set($data, 'nested.data.property', 'foo');
 		self::assertEquals('foo', $data['nested']->data->property);
 	}
 
@@ -44,8 +42,7 @@ class SetTest extends TestCase
 	{
 		$data = [];
 
-		$dot = Dot::from($data);
-		$dot->set('key.foo->bar.baz', 2);
+		set($data, 'key.foo->bar.baz', 2);
 		self::assertEquals(2, $data['key']['foo']->bar['baz']);
 	}
 
@@ -63,8 +60,7 @@ class SetTest extends TestCase
 			]
 		];
 
-		$dot = Dot::from($data);
-		$dot->set([
+		set($data, [
 			'nested.data.property' => 'foo',
 			'nested.another.property' => 'bar',
 		]);
@@ -90,8 +86,7 @@ class SetTest extends TestCase
 			]
 		];
 
-		$dot = Dot::from($data);
-		$dot->set('nested.property.@setValue', 'value');
+		set($data, 'nested.property.@setValue', 'value');
 		self::assertEquals('value', $data['nested']['property']->getValue());
 	}
 
@@ -112,8 +107,7 @@ class SetTest extends TestCase
 			]
 		];
 
-		$dot = Dot::from($data);
-		$dot->set('nested.property.@addValue*', ['foo', 'bar', 'baz']);
+		set($data, 'nested.property.@addValue*', ['foo', 'bar', 'baz']);
 		self::assertEquals(['foo', 'bar', 'baz'], $data['nested']['property']->getValues());
 	}
 
@@ -126,8 +120,7 @@ class SetTest extends TestCase
 	{
 		$data = [];
 
-		$dot = Dot::from($data);
-		$dot->set('property.ddd.@setValue', 'value');
+		set($data, 'property.ddd.@setValue', 'value');
 	}
 
 	/** @test */
@@ -157,8 +150,7 @@ class SetTest extends TestCase
 			],
 		];
 
-		$dot = Dot::from($data);
-		$dot->set('*.items.*.name', 'sameName');
+		set($data, '*.items.*.name', 'sameName');
 
 		self::assertEquals('sameName', $data[0]['items'][0]['name']);
 		self::assertEquals('sameName', $data[0]['items'][1]['name']);
@@ -181,8 +173,7 @@ class SetTest extends TestCase
 			]
 		];
 
-		$dot = Dot::from($data);
-		$dot->set('nested.data.*.property.*', 'foo');
+		set($data, 'nested.data.*.property.*', 'foo');
 		self::assertEquals(['foo', 'foo'], $data['nested']['data'][0]['property']);
 
 		self::assertEquals(['foo', 'foo'], $data['nested']['data'][0]['property']);

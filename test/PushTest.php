@@ -2,8 +2,8 @@
 
 namespace Noj\Dot\Test;
 
-use Noj\Dot\Dot;
 use PHPUnit\Framework\TestCase;
+use function Noj\Dot\push;
 
 class PushTest extends TestCase
 {
@@ -11,7 +11,7 @@ class PushTest extends TestCase
 	public function it_should_push_onto_array()
 	{
 		$data = ['items' => ['item1', 'item2']];
-		(new Dot($data))->push('items', 'item3');
+		push($data, 'items', 'item3');
 
 		self::assertEquals(['item1', 'item2', 'item3'], $data['items']);
 	}
@@ -24,7 +24,7 @@ class PushTest extends TestCase
 			['items' => ['item1']],
 		];
 
-		(new Dot($users))->push('*.items', 'item2');
+		push($users, '*.items', 'item2');
 
 		self::assertEquals(['item2'], $users[0]['items']);
 		self::assertEquals(['item1', 'item2'], $users[1]['items']);
@@ -34,7 +34,7 @@ class PushTest extends TestCase
 	public function it_does_nothing_if_array_doesnt_exist()
 	{
 		$data = [];
-		(new Dot($data))->push('user.items', 'item');
+		push($data, 'user.items', 'item');
 
 		self::assertEmpty($data);
 	}

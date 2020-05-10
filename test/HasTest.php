@@ -2,8 +2,8 @@
 
 namespace Noj\Dot\Test;
 
-use Noj\Dot\Dot;
 use PHPUnit\Framework\TestCase;
+use function Noj\Dot\has;
 
 class HasTest extends TestCase
 {
@@ -12,8 +12,7 @@ class HasTest extends TestCase
 	{
 		$data = ['foo' => ['bar' => 'baz']];
 
-		$dot = new Dot($data);
-		self::assertTrue($dot->has('foo.bar'));
+		self::assertTrue(has($data, 'foo.bar'));
 	}
 
 	/** @test */
@@ -21,8 +20,7 @@ class HasTest extends TestCase
 	{
 		$data = ['foo' => ['bar' => 'baz']];
 
-		$dot = new Dot($data);
-		self::assertFalse($dot->has('foo.baz'));
+		self::assertFalse(has($data, 'foo.baz'));
 	}
 
 	/** @test */
@@ -34,7 +32,6 @@ class HasTest extends TestCase
 			['baz' => true],
 		];
 
-		$dot = new Dot($data);
-		self::assertTrue($dot->has('*.bar'));
+		self::assertTrue(has($data, '*.bar'));
 	}
 }
