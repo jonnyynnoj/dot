@@ -16,17 +16,20 @@ class FindTest extends TestCase
 
 		self::assertEquals(
 			[
-				(object)[
+				[
 					'id' => 3,
-					'banned' => true
+					'banned' => true,
+					'items' => []
 				],
-				(object)[
+				[
 					'id' => 4,
-					'banned' => true
+					'banned' => true,
+					'items' => []
 				],
-				(object)[
+				[
 					'id' => 2,
-					'banned' => true
+					'banned' => true,
+					'items' => []
 				],
 			],
 			$found->get()
@@ -42,13 +45,15 @@ class FindTest extends TestCase
 
 		self::assertEquals(
 			[
-				(object)[
+				[
 					'id' => 1,
-					'banned' => false
+					'banned' => false,
+					'items' => []
 				],
-				(object)[
+				[
 					'id' => 2,
-					'banned' => true
+					'banned' => true,
+					'items' => []
 				],
 			],
 			$found->get()
@@ -58,15 +63,16 @@ class FindTest extends TestCase
 	/** @test */
 	public function it_can_find_item_by_callable()
 	{
-		$found = find($this->data, 'groups.*.users.*', function (\stdClass $user) {
-			return $user->id < 3 && $user->banned;
+		$found = find($this->data, 'groups.*.users.*', function (array $user) {
+			return $user['id'] < 3 && $user['banned'];
 		});
 
 		self::assertEquals(
 			[
-				(object)[
+				[
 					'id' => 2,
-					'banned' => true
+					'banned' => true,
+					'items' => []
 				],
 			],
 			$found->get()

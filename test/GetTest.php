@@ -18,6 +18,10 @@ class GetTest extends TestCase
 		$data = ['foo', 'bar'];
 		$value = get($data, '0');
 		self::assertEquals('foo', $value);
+
+		$data = ['foo', 'bar'];
+		$value = get($data, 0);
+		self::assertEquals('foo', $value);
 	}
 
 	/** @test */

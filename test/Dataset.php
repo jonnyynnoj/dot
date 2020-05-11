@@ -11,24 +11,28 @@ trait Dataset
 		$this->data = [
 			'groups' => [[
 				'users' => [
-					(object)[
+					[
 						'id' => 1,
-						'banned' => false
+						'banned' => false,
+						'items' => []
 					],
-					(object)[
+					[
 						'id' => 3,
-						'banned' => true
+						'banned' => true,
+						'items' => []
 					],
-					(object)[
+					[
 						'id' => 4,
-						'banned' => true
+						'banned' => true,
+						'items' => []
 					],
 				]
 			], [
 				'users' => [
-					(object)[
+					[
 						'id' => 2,
-						'banned' => true
+						'banned' => true,
+						'items' => []
 					],
 				],
 			]]

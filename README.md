@@ -62,9 +62,10 @@ $data = [
 
 - [count](#dotcountstring-path-int)
 - [find](#dotfindstring-path-mixed-equals-dot)
-- [get](#dotgetstring-path-mixed)
+- [first](#dotfirststring-path-mixed-equals-dot)
+- [get](#dotgetnullintstring-path-mixed)
 - [has](#dothasstring-path-bool)
-- [push](#dotpushstring-path-mixed-value-void)
+- [push](#dotpushstring-path-mixed-value-dot)
 - [set](#dotsetarraystring-paths-mixed-value-void)
 
 All methods are also available as standalone functions ie `\Noj\Dot\get($data, 'groups')`
@@ -79,15 +80,15 @@ $dot->count('groups.*.items'); // 3
 
 #### `Dot::find(string $path, mixed $equals): Dot`
 
-Find items matching the given condition.
+Find items that pass the given truth test.
 
 ```php
 // find where property === value
 $dot->find('groups.*.items.*.rare', true)->get();
 /*
 [
+    ['name' => 'item3', 'rare' => true],
     ['name' => 'item2', 'rare' => true],
-    ['name' => 'item3', 'rare' => true]
 ]
 */
 
@@ -102,7 +103,19 @@ $dot->find('groups.*.items.*', function (array $item) {
 })->get();
 ```
 
-#### `Dot::get(string $path): mixed`
+#### `Dot::first(string $path, mixed $equals): Dot`
+
+Find the first item that passes the given truth test.
+
+```php
+$dot->first('groups.*.items.*.rare', true)->get(); // ['name' => 'item3', 'rare' => true]
+
+$dot->first('groups.*.items.*', function (array $item) {
+    return $item['rare'] === true;
+})->get(); // same as above
+```
+
+#### `Dot::get(null|int|string $path): mixed`
 
 Access nested array keys and object properties using dot syntax:
 
@@ -156,7 +169,7 @@ Returns true if path exists, false otherwise:
 $dot->has('groups.0.items.1.name'); // true
 ```
 
-#### `Dot::push(string $path, mixed $value): void`
+#### `Dot::push(string $path, mixed $value): Dot`
 
 Push a value onto an existing array:
 

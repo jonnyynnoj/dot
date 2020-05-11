@@ -36,9 +36,6 @@ class CountTest extends TestCase
 		$count = count($this->data, 'foo');
 		self::assertEquals(0, $count);
 
-		$count = count($this->data, 'groups.0.users.1');
-		self::assertEquals(0, $count);
-
 		$count = count($this->data, 'groups.*.users.*.doesnt.*.exist');
 		self::assertEquals(0, $count);
 	}

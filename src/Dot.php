@@ -4,7 +4,6 @@ namespace Noj\Dot;
 
 use Closure;
 use Noj\Dot\Exception\InvalidMethodException;
-use Noj\Dot\Parser\Node;
 use Noj\Dot\Parser\Parser;
 use Noj\Dot\Parser\Segment;
 
@@ -59,25 +58,27 @@ class Dot
 		return new self($found);
 	}
 
-	public function get(string $path = null)
+	public function first(string $path = null, $equals = null): self
+	{
+		if ($path === null) {
+			return $this->select(0);
+		}
+
+		return $this->find($path, $equals)->first();
+	}
+
+	/**
+	 * @param null|int|string $path
+	 *
+	 * @return array|mixed|null
+	 */
+	public function get($path = null)
 	{
 		if ($path === null) {
 			return $this->data;
 		}
 
-		$parser = new Parser();
-		$nodeList = $parser->parse($this->data, $path);
-
-		$nodes = $nodeList->getLeafNodes();
-		$values = array_map(function (Node $node) {
-			try {
-				return $node->accessValue();
-			} catch (InvalidMethodException $e) {
-				return null;
-			}
-		}, $nodes);
-
-		return !$parser->branched ? $values[0] : $this->flatten($values);
+		return $this->select($path)->data;
 	}
 
 	public function has(string $path): bool
@@ -85,7 +86,7 @@ class Dot
 		return $this->get($path) !== null;
 	}
 
-	public function push(string $path, $value)
+	public function push(string $path, $value): self
 	{
 		$parser = new Parser();
 		$nodeList = $parser->parse($this->data, $path);
@@ -94,6 +95,8 @@ class Dot
 			$array = &$node->accessValue();
 			$array[] = $value;
 		}
+
+		return $this;
 	}
 
 	public function set($paths, $value = null)
@@ -134,6 +137,37 @@ class Dot
 		}
 	}
 
+	private function select($path): self
+	{
+		if (is_int($path)) {
+			$value = $this->data[$path] ?? null;
+			return new self($value);
+		}
+
+		if (!is_string($path)) {
+			$value = null;
+			return new self($value);
+		}
+
+		$parser = new Parser();
+		$nodeList = $parser->parse($this->data, $path);
+
+		$values = [];
+		foreach ($nodeList->getLeafNodes() as $node) {
+			try {
+				$values[] = &$node->accessValue();
+			} catch (InvalidMethodException $e) {
+			}
+		}
+
+		if (!$parser->branched) {
+			return new self($values[0]);
+		}
+
+		$flattened = $this->flatten($values);
+		return new self($flattened);
+	}
+
 	private function equality($value): callable
 	{
 		return function ($item) use ($value) {
@@ -141,13 +175,26 @@ class Dot
 		};
 	}
 
-	private function flatten(array $values): array
+	private function flatten(array &$values): array
 	{
-		return array_merge([], ...array_map([$this, 'wrap'], $values));
+		$flattened = [];
+		foreach ($values as &$value) {
+			$wrapped = &$this->wrap($value);
+			foreach ($wrapped as &$v) {
+				$flattened[] = &$v;
+			}
+		}
+
+		return $flattened;
 	}
 
-	private function wrap($value): array
+	private function &wrap(&$value): array
 	{
-		return is_array($value) ? $value : [$value];
+		if (is_array($value)) {
+			return $value;
+		}
+
+		$wrapped = [&$value];
+		return $wrapped;
 	}
 }
