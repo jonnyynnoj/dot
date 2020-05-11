@@ -11,9 +11,10 @@ class PushTest extends TestCase
 	public function it_should_push_onto_array()
 	{
 		$data = ['items' => ['item1', 'item2']];
-		push($data, 'items', 'item3');
+		$items = push($data, 'items', 'item3');
 
 		self::assertEquals(['item1', 'item2', 'item3'], $data['items']);
+		self::assertEquals(['item1', 'item2', 'item3'], $items);
 	}
 
 	/** @test */

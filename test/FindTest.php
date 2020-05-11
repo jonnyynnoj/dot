@@ -32,7 +32,7 @@ class FindTest extends TestCase
 					'items' => []
 				],
 			],
-			$found->get()
+			$found
 		);
 	}
 
@@ -56,7 +56,7 @@ class FindTest extends TestCase
 					'items' => []
 				],
 			],
-			$found->get()
+			$found
 		);
 	}
 
@@ -75,7 +75,7 @@ class FindTest extends TestCase
 					'items' => []
 				],
 			],
-			$found->get()
+			$found
 		);
 	}
 
@@ -84,6 +84,6 @@ class FindTest extends TestCase
 	{
 		$found = find($this->data, 'groups.*.users.*.foo', 'bar');
 
-		self::assertCount(0, $found->get());
+		self::assertCount(0, $found);
 	}
 }

@@ -2,6 +2,7 @@
 
 namespace Noj\Dot\Test;
 
+use Noj\Dot\Dot;
 use PHPUnit\Framework\TestCase;
 use function Noj\Dot\first;
 
@@ -12,7 +13,7 @@ class FirstTest extends TestCase
 	/** @test */
 	public function it_returns_first_match_by_value()
 	{
-		$result = first($this->data, 'groups.*.users.*.banned', true)->get();
+		$result = first($this->data, 'groups.*.users.*.banned', true);
 
 		self::assertEquals($this->data['groups'][0]['users'][1], $result);
 	}
@@ -22,7 +23,7 @@ class FirstTest extends TestCase
 	{
 		$result = first($this->data, 'groups.*.users.*', function (array $user) {
 			return $user['id'] > 1;
-		})->get();
+		});
 
 		self::assertEquals($this->data['groups'][0]['users'][1], $result);
 	}
@@ -30,7 +31,7 @@ class FirstTest extends TestCase
 	/** @test */
 	public function it_returns_null_if_no_match()
 	{
-		$result = first($this->data, 'groups.*.users.*.banned', 'foo')->get();
+		$result = first($this->data, 'groups.*.users.*.banned', 'foo');
 
 		self::assertNull($result);
 	}
@@ -38,7 +39,7 @@ class FirstTest extends TestCase
 	/** @test */
 	public function it_returns_first_index()
 	{
-		$result = first($this->data['groups'][0]['users'])->get();
+		$result = Dot::from($this->data['groups'][0]['users'])->first()->get();
 
 		self::assertEquals($this->data['groups'][0]['users'][0], $result);
 	}

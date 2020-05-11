@@ -68,8 +68,6 @@ $data = [
 - [push](#dotpushstring-path-mixed-value-dot)
 - [set](#dotsetarraystring-paths-mixed-value-void)
 
-All methods are also available as standalone functions ie `\Noj\Dot\get($data, 'groups')`
-
 #### `Dot::count(string $path): int`
 
 Count the number of items at a given path.
@@ -237,4 +235,18 @@ Or call a method for each value of an array:
 ```php
 $dot->set('foo.@addBar*', ['value1', 'value2']);
 echo $data['foo']->bars; // ['value1', 'value2']
+```
+
+### Non-chained versions
+
+All methods have non-chained versions of themselves as a standalone function, i.e:
+
+```php
+// instead of
+$filtered = \Noj\Dot\Dot::from($data)
+    ->find('groups.*.items.*.rare', true)
+    ->get();
+
+// you can do
+$filtered = \Noj\Dot\find($data, 'groups.*.items.*.rare', true');
 ```

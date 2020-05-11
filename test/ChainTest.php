@@ -2,8 +2,8 @@
 
 namespace Noj\Dot\Test;
 
+use Noj\Dot\Dot;
 use PHPUnit\Framework\TestCase;
-use function Noj\Dot\find;
 
 class ChainTest extends TestCase
 {
@@ -12,7 +12,8 @@ class ChainTest extends TestCase
 	/** @test */
 	public function it_can_find_push_and_select()
 	{
-		$items = find($this->data, 'groups.*.users.*.banned', false)
+		$items = Dot::from($this->data)
+			->find('groups.*.users.*.banned', false)
 			->push('*.items', 'an item')
 			->get('*.items');
 
