@@ -13,7 +13,7 @@
 		"test": "phpunit"
 	},
 	"require": {
-		"php": "^7.0"
+		"php": "^7.0|^8.0"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "^6.5|^7.5"
